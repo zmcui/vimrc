@@ -22,6 +22,8 @@
 " -> Automatically close the quick fix window when leaving a file
 " -> Vundle:NerdTree
 " -> Vundle:Tlist
+" -> Vundle:ctrlp
+" -> Vundle:YouCompleteMe
 "
 " Description:
 " This is the personal .vimrc file of zongmin.cui
@@ -247,4 +249,18 @@ let Tlist_GainFocus_On_ToggleOpen=1
 let Tlist_Close_On_Select=0
 let Tlist_Show_One_File=1
 let Tlist_Exit_OnlyWindow=1
+
+""""""""""""""""""""""""""""""
+" Vundle:ctrlp
+""""""""""""""""""""""""""""""
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files']
+
+""""""""""""""""""""""""""""""
+" Vundle:YouCompleteMe
+""""""""""""""""""""""""""""""
+
+"===============
+" look for tags up and up
+"===============
+set tags=./tags,tags;$HOME
 
