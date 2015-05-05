@@ -10,3 +10,6 @@ mv -f ~/.bash_aliases ~/.bash_aliases_old
 fi
  
 ln -s `pwd`/bash_aliases ~/.bash_aliases
+
+#install vundle for vim
+git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
