@@ -24,6 +24,8 @@
 " -> Vundle:Tlist
 " -> Vundle:ctrlp
 " -> Vundle:YouCompleteMe
+" -> Vundle:ack.vim
+" -> Vundle:ag.vim
 "
 " Description:
 " This is the personal .vimrc file of zongmin.cui
@@ -35,8 +37,8 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set nocompatible		        "Be iMproved
 set history=1000	        	"Lines of history VIM has to remember
-set showcmd                     "Show incomplete cmds down the bottom
-set showmode                    "Show current mode down the bottom
+set showcmd                 "Show incomplete cmds down the bottom
+set showmode                "Show current mode down the bottom
 
 " Uncomment the following to have Vim jump to the last position when
 " reopening a file
@@ -50,6 +52,15 @@ let mapleader=","
 
 " Fast saving
 nmap <leader>w :w!<cr>
+
+" Auto-reload your vimrc
+augroup reload_vimrc " {
+  autocmd!
+  autocmd BufWritePost $MYVIMRC source $MYVIMRC
+augroup END " }
+
+" look for tags up and up
+set tags=./tags,tags;$HOME
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Vundle 
@@ -67,6 +78,8 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'vim-scripts/taglist.vim'
 Plugin 'kien/ctrlp.vim'
 Plugin 'Valloric/YouCompleteMe'
+Plugin 'mileszs/ack.vim'
+Plugin 'rking/ag.vim'
 
 filetype plugin indent on     " required!
 
@@ -94,6 +107,11 @@ set incsearch
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Kick vim to recognize 256-colors modern terminals
+if $COLORTERM == "gnome-terminal" || $TERM == "xterm-256color" || $TERM == "screen-256color"
+  set t_Co=256
+endif
+
 " Enable syntax highlighting
 syntax enable 
 
@@ -148,7 +166,6 @@ map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
 map <leader>tc :tabclose<cr>
 map <leader>tm :tabmove 
-map <leader>t<leader> :tabnext 
 
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
@@ -258,9 +275,50 @@ let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files']
 """"""""""""""""""""""""""""""
 " Vundle:YouCompleteMe
 """"""""""""""""""""""""""""""
+let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+let g:ycm_collect_identifiers_from_tags_files = 1
 
-"===============
-" look for tags up and up
-"===============
-set tags=./tags,tags;$HOME
+""""""""""""""""""""""""""""""
+" Vundle:ack
+""""""""""""""""""""""""""""""
+let g:ackhighlight=1
+"let g:ack_autofold_results=1
+
+""""""""""""""""""""""""""""""
+" Vundle:ag
+""""""""""""""""""""""""""""""
+let g:ag_highlight=1
+nnoremap <silent><F3> :Ag!<CR>
+
+""""""""""""""""""""""""""""""
+" Vundle:cscope
+""""""""""""""""""""""""""""""
+if has("cscope")
+" use quickfix window instead of default way
+set cscopequickfix=s-,c-,d-,i-,t-,e-,g-
+
+" autoloading cscope database
+function! LoadCscope()
+  let db = findfile("cscope.out", ".;")
+  if (!empty(db))
+    let path = strpart(db, 0, match(db, "/cscope.out$"))
+    set nocscopeverbose " suppress 'duplicate connection' error
+    exe "cs add " . db . " " . path
+    set cscopeverbose
+  endif
+endfunction
+au BufEnter /* call LoadCscope()
+
+endif
+
+" cscope bindings
+nmap <leader>ss :cs find s <C-R>=expand("<cword>")<cr><cr>
+nmap <leader>sg :cs find g <C-R>=expand("<cword>")<cr><cr>
+nmap <leader>sc :cs find c <C-R>=expand("<cword>")<cr><cr>
+nmap <leader>st :cs find t <C-R>=expand("<cword>")<cr><cr>
+nmap <leader>se :cs find e <C-R>=expand("<cword>")<cr><cr>
+nmap <leader>sf :cs find f <C-R>=expand("<cfile>")<cr><cr>
+nmap <leader>si :cs find i <C-R>=expand("<cfile>")<cr><cr>
+nmap <leader>sd :cs find d <C-R>=expand("<cword>")<cr><cr>
 
