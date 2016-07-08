@@ -1,0 +1,54 @@
+# A better setup for Git // fullweb weekly
+# Git default configuration is good but it can be personalized to improve your workflow efficiency. 
+# Here are some good lines to put in your ~/.gitconfig:
+
+# The basics, who you commit as:
+[user]
+  name = John Doe
+  email = john@doe.org
+
+# Your Github username
+[github]
+  user = githubusername
+
+# Some aliases to save 1000s keystrokes each year:
+[alias]
+  log = log --color
+  co = checkout
+  br = branch
+  ci = commit
+  st = status
+  # Long but worth it
+  lg = log --graph --pretty=format:'%Cred%h%Creset %C(yellow)%d%Creset %s %Cgreen%ar%Creset by %C(yellow)%an%Creset' --abbrev-commit
+  # Convenient for minified files
+  dw = diff --color-words
+
+# Add colors
+[color]
+  ui = true
+  diff = auto
+
+# Avoid messy merge commits with autorebase
+[branch]
+  autosetuprebase = always
+
+# Push the current branch by default
+[push]
+  default = current
+
+# Guess what you really meant to type
+[help]
+  autocorrect = 1
+
+# Tell git you have a global .gitignore
+[core]
+  excludesfile = ~/.gitignore
+
+# Remove usage hints
+[advice]
+  statusHints = false
+
+# Tell where are the diff from,
+# instead of using a and b notation
+[diff]
+  mnemonicprefix = true

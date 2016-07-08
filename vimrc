@@ -26,6 +26,7 @@
 " -> Vundle:YouCompleteMe
 " -> Vundle:ack.vim
 " -> Vundle:ag.vim
+" -> Vundle:cscope
 "
 " Description:
 " This is the personal .vimrc file of zongmin.cui
@@ -135,12 +136,12 @@ set noswapfile
 " => Text, tab and indent related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use spaces instead of tabs
-set expandtab
+"set expandtab
 " Be smart when using tabs
 set smarttab
 " 1 tab == 2 spaces
-set shiftwidth=2
-set tabstop=2
+"set shiftwidth=2
+"set tabstop=2
 "Auto indent
 set ai
 "Smart indent
@@ -275,7 +276,8 @@ let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files']
 """"""""""""""""""""""""""""""
 " Vundle:YouCompleteMe
 """"""""""""""""""""""""""""""
-let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+"let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+let g:ycm_confirm_extra_conf = 0
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 let g:ycm_collect_identifiers_from_tags_files = 1
 
@@ -321,4 +323,24 @@ nmap <leader>se :cs find e <C-R>=expand("<cword>")<cr><cr>
 nmap <leader>sf :cs find f <C-R>=expand("<cfile>")<cr><cr>
 nmap <leader>si :cs find i <C-R>=expand("<cfile>")<cr><cr>
 nmap <leader>sd :cs find d <C-R>=expand("<cword>")<cr><cr>
+nmap <leader>so :copen<cr>
 
+" logcat
+au BufRead,BufNewFile *.logcat set filetype=logcat
+au BufRead,BufNewFile *.txt set filetype=logcat
+
+" 256-color putty
+if &term =~ "xterm"
+  " 256 colors
+  let &t_Co = 256
+  " restore screen after quitting
+  let &t_ti = "\<Esc>7\<Esc>[r\<Esc>[?47h"
+  let &t_te = "\<Esc>[?47l\<Esc>8"
+  if has("terminfo")
+    let &t_Sf = "\<Esc>[3%p1%dm"
+    let &t_Sb = "\<Esc>[4%p1%dm"
+  else
+    let &t_Sf = "\<Esc>[3%dm"
+    let &t_Sb = "\<Esc>[4%dm"
+  endif
+endif
