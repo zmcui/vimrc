@@ -1,6 +1,7 @@
 # Personal Vimrc Guide
 ---
-[toc]
+[TOC]
+
 ## basic Usage
 ### Replace
 ```vim
@@ -26,13 +27,14 @@ Bundle 'kien/ctrlp.vim'
 Bundle 'Valloric/YouCompleteMe'
 Bundle 'mileszs/ack.vim'
 Bundle 'rking/ag.vim'
-Bundle 'cscope'
+Bundle 'lrvick/Conque-Shell'
 
 ### taglist
 #### FAQ:
-- - Error when switch to tab with taglist opened
+- Error when switch to tab with taglist opened
 
 ![enter description here][1]
+
 [How to Fix](https://github.com/rgo/taglist.vim/commit/2c664eee00e702523d28ae0813f3f343f56098ee)
 
 ### cscope
@@ -66,13 +68,17 @@ cscope -Rbq
 ```
 ### YouCompleteMe
 #### config
-- ==g:ycm_confirm_extra_conf==
+- `g:ycm_confirm_extra_conf`
  disable prompt if '.ycm_extra_conf.py' is safe to be loaded everytime
 
 #### FAQ:
 - prompt header file not found when open source file
 删除.ycm_extra_conf.py配置里的`'-I’, '.'`
 
+### syntastic
+#### FAQ:
+- Including header files recursively for syntastic
+[how to](http://stackoverflow.com/questions/16622992/including-header-files-recursively-for-syntastic)
 
 ## [Using tab pages](http://vim.wikia.com/wiki/Using_tab_pages)
 ### Navigation
@@ -84,8 +90,13 @@ gT
 "go to tab in position i
 {i}gt
 ```
-
-
+useful mappings for managing tabs
+```vim
+map <leader>tn :tabnew<cr>
+map <leader>to :tabonly<cr>
+map <leader>tc :tabclose<cr>
+map <leader>tm :tabmove
+```
 
 
 

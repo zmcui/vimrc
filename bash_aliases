@@ -10,8 +10,6 @@ alias .....='cd ../../../..'
 alias gts='git status .' 
 # change directory to the git root directory 
 alias gtr='cd "$(git rev-parse --show-toplevel)"'
-# rm -rf
-alias rm='rm -rf'
 
 # mm replace libraries 
 alias mmreplace='(mm | grep "^Install:" || mm -B | grep "^Install:") | sed -e"s/^Install: //" | grep -ve "\(\.txt\|\.data\|\.bin\|\.yuv\)$" |
@@ -40,3 +38,37 @@ done'
 alias tocs='cd ~/work/asrc/frameworks/av/services/camera/libcameraservice/'
 alias toce='cd ~/work/asrc/vendor/marvell/generic/cameraengine'
 alias tohal='cd ~/work/asrc/vendor/marvell/generic/camera-hal-32'
+
+# command hint
+alias ch='echo tar -czf xx.tar.gz xx
+          echo tar -xzvf xx.tar.gz
+          echo tar -cf xx.tar xx
+          echo tar -xf xx.tar
+          echo vimdiff do dp [c ]c [[ ]]
+          echo cscope -Rbq
+'
+
+# mv to trash
+alias rm=trash
+alias rl='ls ~/.trash'
+alias ur=undelfile
+
+undelfile()
+{
+    mv -i ~/.trash/$@ ./
+}
+
+trash()
+{
+    mv $@ ~/.trash/
+}
+
+cleartrash()
+{
+    read -p "clear sure?[n]" confrim
+    case "$confirm" in
+        [yY])
+    	   /usr/bin/rm -rf ~/.trash/*;;
+    esac
+    #["$confirm" == "y"] || ["$confirm" == "Y"] && [/usr/bin/rm -rf ~/.trash/*]
+}

@@ -9,24 +9,30 @@
 " 2015-01-13 12:17:12
 "
 " Section:
-" -> General
-" -> Vundle
-" -> VIM user interface
-" -> Colors and Fonts
-" -> Files, backups and undo
-" -> Text, tab and indent related
-" -> Moving around, tabs, windows and buffers
-" -> Status line
-" -> Editing mappings
-" -> Timestamp 
-" -> Automatically close the quick fix window when leaving a file
-" -> Vundle:NerdTree
-" -> Vundle:Tlist
-" -> Vundle:ctrlp
-" -> Vundle:YouCompleteMe
-" -> Vundle:ack.vim
-" -> Vundle:ag.vim
-" -> Vundle:cscope
+" => General
+" => Vundle
+" => VIM user interface
+" => Colors and Fonts
+" => Files, backups and undo
+" => Text, tab and indent related
+" => tabs, windows and buffers
+" => quickfix
+" => Status line
+" => Editing mappings
+" => Paired character
+" => Timestamp
+"
+" => Vundle:NerdTree
+" => Vundle:Tlist
+" => Vundle:ctrlp
+" => Vundle:YouCompleteMe
+" => Vundle:ack.vim
+" => Vundle:ag.vim
+" => Vundle:cscope
+" => Vundle:syntastic
+" => Vundle:nerdcommenter
+" => Vundle:a.vim
+" => Vundle:supertab
 "
 " Description:
 " This is the personal .vimrc file of zongmin.cui
@@ -53,6 +59,7 @@ let mapleader=","
 
 " Fast saving
 nmap <leader>w :w!<cr>
+nmap <leader>q :qa!<cr>
 
 " Auto-reload your vimrc
 augroup reload_vimrc " {
@@ -62,6 +69,9 @@ augroup END " }
 
 " look for tags up and up
 set tags=./tags,tags;$HOME
+
+" using clipboard as the default register
+set clipboard=unnamedplus
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Vundle 
@@ -76,11 +86,15 @@ Plugin 'gmarik/vundle'        " required!
 " original repos on github
 Plugin 'bling/vim-airline'
 Plugin 'scrooloose/nerdtree'
-Plugin 'vim-scripts/taglist.vim'
+Plugin 'majutsushi/tagbar'
 Plugin 'kien/ctrlp.vim'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'mileszs/ack.vim'
 Plugin 'rking/ag.vim'
+Plugin 'scrooloose/syntastic'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'vim-scripts/a.vim'
+Plugin 'ervandew/supertab'
 
 filetype plugin indent on     " required!
 
@@ -151,10 +165,10 @@ set wrap
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Moving around, tabs, windows and buffers
+" => tabs, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Map <Space> to / (search)
-map <space> /
+" open new tab page in quickfix window results
+set switchbuf+=usetab,newtab
 
 " Smart way to move between windows
 map <C-j> <C-W>j
@@ -171,6 +185,23 @@ map <leader>tm :tabmove
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
 map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+
+
+""""""""""""""""""""""""""""""
+" => quickfix
+""""""""""""""""""""""""""""""
+" Automatically close the quick fix window when leaving a file
+aug QFClose
+  au!
+  au WinEnter * if winnr('$') == 1 && getbufvar(winbufnr(winnr()), "&buftype") == "quickfix"|q|endif
+aug END
+
+" Automatically fitting a quickfix window height
+au FileType qf call AdjustWindowHeight(3, 10)
+function! AdjustWindowHeight(minheight, maxheight)
+  exe max([min([line("$")+1, a:maxheight]), a:minheight]) . "wincmd _"
+endfunction
+
 
 """"""""""""""""""""""""""""""
 " => Status line
@@ -221,14 +252,6 @@ inoremap <expr> )  strpart(getline('.'), col('.')-1, 1) == ")" ? "\<Right>" : ")
 iab xtime <c-r>=strftime("%d-%m-%y %H:%M:%S")<cr>
 iab xdate <c-r>=strftime("%a, %d %b %Y %H:%M:%S %z")<cr>
 
-""""""""""""""""""""""""""""""
-" => Automatically close the quick fix window when leaving a file
-""""""""""""""""""""""""""""""
-aug QFClose
-  au!
-  au WinEnter * if winnr('$') == 1 && getbufvar(winbufnr(winnr()), "&buftype") == "quickfix"|q|endif
-aug END
-
 
 """"""""""""""""""""""""""""""
 " Vundle:NerdTree
@@ -260,13 +283,12 @@ endfunction
 
 
 """"""""""""""""""""""""""""""
-" Vundle:Tlist
+" Vundle:tagbar
 """"""""""""""""""""""""""""""
-nnoremap <silent> <F8> :TlistToggle<CR>
-let Tlist_GainFocus_On_ToggleOpen=1
-let Tlist_Close_On_Select=0
-let Tlist_Show_One_File=1
-let Tlist_Exit_OnlyWindow=1
+nnoremap <silent> <F8> :TagbarToggle<CR>
+let g:tagbar_left = 1
+let g:tagbar_width=30
+let g:tagbar_autofocus=1
 
 """"""""""""""""""""""""""""""
 " Vundle:ctrlp
@@ -311,21 +333,61 @@ function! LoadCscope()
   endif
 endfunction
 au BufEnter /* call LoadCscope()
-
 endif
 
 " cscope bindings
-nmap <leader>ss :cs find s <C-R>=expand("<cword>")<cr><cr>
-nmap <leader>sg :cs find g <C-R>=expand("<cword>")<cr><cr>
-nmap <leader>sc :cs find c <C-R>=expand("<cword>")<cr><cr>
-nmap <leader>st :cs find t <C-R>=expand("<cword>")<cr><cr>
-nmap <leader>se :cs find e <C-R>=expand("<cword>")<cr><cr>
-nmap <leader>sf :cs find f <C-R>=expand("<cfile>")<cr><cr>
-nmap <leader>si :cs find i <C-R>=expand("<cfile>")<cr><cr>
-nmap <leader>sd :cs find d <C-R>=expand("<cword>")<cr><cr>
+nmap <leader>ss :cs find s <C-R>=expand("<cword>")<cr><cr>:copen<cr>
+nmap <leader>sg :cs find g <C-R>=expand("<cword>")<cr><cr>:copen<cr>
+nmap <leader>sc :cs find c <C-R>=expand("<cword>")<cr><cr>:copen<cr>
+nmap <leader>st :cs find t <C-R>=expand("<cword>")<cr><cr>:copen<cr>
+nmap <leader>se :cs find e <C-R>=expand("<cword>")<cr><cr>:copen<cr>
+nmap <leader>sf :cs find f <C-R>=expand("<cfile>")<cr><cr>:copen<cr>
+nmap <leader>si :cs find i <C-R>=expand("<cfile>")<cr><cr>:copen<cr>
+nmap <leader>sd :cs find d <C-R>=expand("<cword>")<cr><cr>:copen<cr>
 nmap <leader>so :copen<cr>
 
-" logcat
+""""""""""""""""""""""""""""""
+" Vundle:syntastic
+""""""""""""""""""""""""""""""
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+"let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+let g:syntastic_c_check_header = 0
+let g:syntastic_cpp_check_header = 0
+let g:syntastic_c_config_file = '.systastic_c_config'
+let g:syntastic_cpp_config_file = '.systastic_cpp_config'
+
+""""""""""""""""""""""""""""""
+" Vundle:nerdcommenter
+""""""""""""""""""""""""""""""
+"Add spaces after comment delimiters by default
+let g:NERDSpaceDelims = 1
+" Use compact syntax for prettified multi-line comments
+"let g:NERDCompactSexyComs = 1
+" Align line-wise comment delimiters flush left instead of following code indentation
+let g:NERDDefaultAlign = 'left'
+" Set a language to use its alternate delimiters by default
+let g:NERDAltDelims_java = 1
+" Add your own custom formats or override the defaults
+"let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
+" Allow commenting and inverting empty lines (useful when commenting a region)
+let g:NERDCommentEmptyLines = 1
+" Enable trimming of trailing whitespace when uncommenting
+let g:NERDTrimTrailingWhitespace = 1
+
+""""""""""""""""""""""""""""""
+" Vundle:a.vim
+""""""""""""""""""""""""""""""
+nmap <F4> :AT<cr>
+
+""""""""""""""""""""""""""""""
+" => logcat
+""""""""""""""""""""""""""""""
 au BufRead,BufNewFile *.logcat set filetype=logcat
 au BufRead,BufNewFile *.txt set filetype=logcat
 
