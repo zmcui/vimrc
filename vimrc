@@ -21,9 +21,10 @@
 " => Editing mappings
 " => Paired character
 " => Timestamp
+" => logcat
 "
 " => Vundle:NerdTree
-" => Vundle:Tlist
+" => Vundle:tagbar
 " => Vundle:ctrlp
 " => Vundle:YouCompleteMe
 " => Vundle:ack.vim
@@ -33,6 +34,8 @@
 " => Vundle:nerdcommenter
 " => Vundle:a.vim
 " => Vundle:supertab
+" => Vundle:vim-autoclose
+" => Vundle:vim-fugitive
 "
 " Description:
 " This is the personal .vimrc file of zongmin.cui
@@ -59,7 +62,7 @@ let mapleader=","
 
 " Fast saving
 nmap <leader>w :w!<cr>
-nmap <leader>q :qa!<cr>
+nmap <leader>q :qa<cr>
 
 " Auto-reload your vimrc
 augroup reload_vimrc " {
@@ -72,6 +75,10 @@ set tags=./tags,tags;$HOME
 
 " using clipboard as the default register
 set clipboard=unnamedplus
+
+" search down into subfolders
+" Provides tab-completion for all file-related tasks
+set path+=**
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Vundle 
@@ -95,6 +102,9 @@ Plugin 'scrooloose/syntastic'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'vim-scripts/a.vim'
 Plugin 'ervandew/supertab'
+Plugin 'Townk/vim-autoclose'
+Plugin 'tpope/vim-fugitive'
+Plugin 'vim-scripts/Logcat-syntax-highlighter'
 
 filetype plugin indent on     " required!
 
@@ -117,7 +127,7 @@ set hlsearch
 " Makes search act like search in modern browsers
 set incsearch 
 " Cursorline
-"set cursorline
+set cursorline
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts
@@ -177,10 +187,11 @@ map <C-h> <C-W>h
 map <C-l> <C-W>l
 
 " Useful mappings for managing tabs
-map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
 map <leader>tc :tabclose<cr>
 map <leader>tm :tabmove 
+map <leader>tp :tabp<cr>
+map <leader>tn :tabn<cr>
 
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
@@ -227,21 +238,21 @@ vnoremap <A-k> :m '<-2<CR>gv=gv
 " the same line after the cursor
 " If you quickly press Enter after the open brace (to begin a code block), the
 " closing brace will be inserted on the line below the cursor
-inoremap {      {}<Left>
-inoremap {<CR>  {<CR>}<Esc>O
-inoremap {{     {
-inoremap {}     {}
-"
-inoremap (      ()<Left>
-inoremap [      []<Left>
-inoremap []     []
-"
+" inoremap {      {}<Left>
+" inoremap {<CR>  {<CR>}<Esc>O
+" inoremap {{     {
+" inoremap {}     {}
+" "
+" inoremap (      ()<Left>
+" inoremap [      []<Left>
+" inoremap []     []
+" "
 inoremap /*          /**/<Left><Left>
 inoremap /*<Space>   /*<Space><Space>*/<Left><Left><Left>
 inoremap /*<CR>      /*<CR>*/<Esc>O
 inoremap <Leader>/*  /*
-
-inoremap <expr> )  strpart(getline('.'), col('.')-1, 1) == ")" ? "\<Right>" : ")"
+"
+" inoremap <expr> )  strpart(getline('.'), col('.')-1, 1) == ")" ? "\<Right>" : ")"
 
 
 """"""""""""""""""""""""""""""
@@ -289,6 +300,7 @@ nnoremap <silent> <F8> :TagbarToggle<CR>
 let g:tagbar_left = 1
 let g:tagbar_width=30
 let g:tagbar_autofocus=1
+let g:tagbar_sort = 0
 
 """"""""""""""""""""""""""""""
 " Vundle:ctrlp
@@ -341,7 +353,7 @@ nmap <leader>sg :cs find g <C-R>=expand("<cword>")<cr><cr>:copen<cr>
 nmap <leader>sc :cs find c <C-R>=expand("<cword>")<cr><cr>:copen<cr>
 nmap <leader>st :cs find t <C-R>=expand("<cword>")<cr><cr>:copen<cr>
 nmap <leader>se :cs find e <C-R>=expand("<cword>")<cr><cr>:copen<cr>
-nmap <leader>sf :cs find f <C-R>=expand("<cfile>")<cr><cr>:copen<cr>
+nmap <leader>sf :cs find f <C-R>=expand("<cfile>")<cr><cr>
 nmap <leader>si :cs find i <C-R>=expand("<cfile>")<cr><cr>:copen<cr>
 nmap <leader>sd :cs find d <C-R>=expand("<cword>")<cr><cr>:copen<cr>
 nmap <leader>so :copen<cr>
@@ -383,6 +395,7 @@ let g:NERDTrimTrailingWhitespace = 1
 """"""""""""""""""""""""""""""
 " Vundle:a.vim
 """"""""""""""""""""""""""""""
+" jump to header file
 nmap <F4> :AT<cr>
 
 """"""""""""""""""""""""""""""
@@ -406,3 +419,7 @@ if &term =~ "xterm"
     let &t_Sb = "\<Esc>[4%dm"
   endif
 endif
+
+nnoremap K :vimgrep "<C-R><C-W>" 
+
+hi CursorLine ctermbg=DarkGray
