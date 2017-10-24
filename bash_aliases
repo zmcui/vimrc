@@ -36,23 +36,14 @@ while read so; do
     popd &>/dev/null
 done'
 
-# cd path/to/code
-alias tocs='cd ~/work/asrc/frameworks/av/services/camera/libcameraservice/'
-alias toce='cd ~/work/asrc/vendor/marvell/generic/cameraengine'
-alias tohal='cd ~/work/asrc/vendor/marvell/generic/camera-hal-32'
+# cp arg1 to public-share
+share()
+{
+    sudo cp "$1" /mnt/lava_share/USER/zongmincui/
+}
 
 # command hint
-alias ch='echo tar -czf xx.tar.gz xx
-          echo tar -xzvf xx.tar.gz
-          echo tar -cf xx.tar xx
-          echo tar -xf xx.tar
-          echo vimdiff do dp [c ]c [[ ]]
-          echo cscope -Rbq
-	  echo git push ssh://zongmincui@source.asrmicro.com:29418/kernel/common HEAD:refs/for/fvp_ve_aemv8a_dev_4.4
-	  echo git push ssh://zongmincui@source.asrmicro.com:29418/baremetal-test HEAD:refs/for/master
-	  echo git rebase -i HEAD~2
-	  echo smbclient //fileserver/public-share -U asrmicro/zongmincui
-'
+alias ch='echo "tar -czf xx.tar.gz xx" | echo "tar -xzvf xx.tar.gz" | echo "tar -cf xx.tar xx" | echo "tar -xf xx.tar" | echo "vimdiff do dp [c ]c [[ ]]" | echo "cscope -Rbq" | echo "git push ssh://zongmincui@source.asrmicro.com:29418/kernel/common HEAD:refs/for/fvp_ve_aemv8a_dev_4.4" | echo "git push ssh://zongmincui@source.asrmicro.com:29418/baremetal-test HEAD:refs/for/master:" | echo "git rebase -i HEAD~2"| echo "smbclient //fileserver/public-share -U asrmicro/zongmincui"'
 
 # mv to trash
 alias rm=trash
@@ -301,3 +292,9 @@ function mmr() {
     popd &>/dev/null
     trap - SIGINT
 }
+
+function docrash()
+{
+	CRASH_EXTENSIONS=~/Workspace/ramdump/devtools/crash_analysis_suite/extensions/ ~/Workspace/ramdump/devtools/crash_analysis_suite/bin/crash -x "$1" "$2"
+}
+

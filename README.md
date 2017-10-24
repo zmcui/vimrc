@@ -4,7 +4,28 @@
 ---
 [TOC]
 
+## Installation
+### VIM 8.0
+```bash
+# run command to add the PPA
+sudo add-apt-repository ppa:jonathonf/vim
+sudo apt update
+sudo apt install vim
+# To uninstall Vim 8.0 and downgrade it to the stock version in Ubuntu repository
+sudo apt install ppa-purge && sudo ppa-purge ppa:jonathonf/vim
+```
+ref
+: [Vim 8.0 Released! How to install it in Ubuntu 16.04](http://tipsonubuntu.com/2016/09/13/vim-8-0-released-install-ubuntu-16-04)
+
 ## basic Usage
+### format
+```vim
+" fix the indentation
+=
+" fix the whole buffer
+gg=G
+```
+
 ### Replace
 ```vim
 " replace the first match on the current line
@@ -55,18 +76,25 @@ http://vim.wikia.com/wiki/VimTip630
 [Using tab pages](http://vim.wikia.com/wiki/Using_tab_pages)
 
 ## Vundles
-Vundle: NerdTree
-Vundle: Tlist
-Vundle: ctrlp
-Vundle: YouCompleteMe
-Vundle: ack.vim
-Vundle: ag.vim
-Vundle: cscope
-Vundle: syntastic
-Vundle: nerdcommenter
-Vundle: a.vim
-Vundle: supertab
-Vundle: vim-autoclose
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+Plugin 'scrooloose/nerdtree'
+Plugin 'majutsushi/tagbar'
+Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'mileszs/ack.vim'
+Plugin 'rking/ag.vim'
+Plugin 'scrooloose/syntastic'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'vim-scripts/a.vim'
+Plugin 'ervandew/supertab'
+Plugin 'Townk/vim-autoclose'
+Plugin 'tpope/vim-fugitive'
+Plugin 'vim-scripts/Logcat-syntax-highlighter'
+Plugin 'godlygeek/tabular'
+Plugin 'plasticboy/vim-markdown'
+Plugin 'Chiel92/vim-autoformat'
 
 ### cscope
 #### config
@@ -82,6 +110,26 @@ nmap <leader>sf :cs find f <C-R>=expand("<cfile>")<cr><cr>
 nmap <leader>si :cs find i <C-R>=expand("<cfile>")<cr><cr>
 nmap <leader>sd :cs find d <C-R>=expand("<cword>")<cr><cr>
 ```
+
+- database
+generate cscope.file
+```bash
+LNX=/home/zongmincui/work/asr_7p1_evb/kernel/linux
+cd /
+find $LNX                                                                \
+    -path "$LNX/arch/*" ! -path "$LNX/arch/arm64*" -prune -o              \
+    -path "$LNX/Documentation*" -prune -o                                 \
+    -path "$LNX/scripts*" -prune -o                                       \
+    -path "$LNX/drivers/media/platform/aquila-isp*" -prune -o             \
+    -name "*.[chxsS]" -print > "$LNX/cscope.files"
+```
+generate cscope database
+```bash
+cscope -b -q -k
+```
+
+[Using Cscope on large projects](http://cscope.sourceforge.net/large_projects.html)
+
 
 #### FAQ:
 - how to install cscope before usage
@@ -110,3 +158,17 @@ cscope -Rbq
 #### FAQ:
 - Including header files recursively for syntastic
 [how to](http://stackoverflow.com/questions/16622992/including-header-files-recursively-for-syntastic)
+
+### vim-fugitive
+Diff between current file and the index
+```vim
+:Gdiff :0
+```
+Diff between current file and some other [revision]
+```vim
+:Gdiff [revision]
+```
+Diff between current file and current file 3 commits ago:
+```vim
+:Gdiff ~3
+```

@@ -36,6 +36,7 @@
 " => Vundle:supertab
 " => Vundle:vim-autoclose
 " => Vundle:vim-fugitive
+" => Vundle:vim-markdown
 "
 " Description:
 " This is the personal .vimrc file of zongmin.cui
@@ -62,7 +63,7 @@ let mapleader=","
 
 " Fast saving
 nmap <leader>w :w!<cr>
-nmap <leader>q :qa<cr>
+nmap <leader>q :bd<cr>
 
 " Auto-reload your vimrc
 augroup reload_vimrc " {
@@ -80,6 +81,8 @@ set clipboard=unnamedplus
 " Provides tab-completion for all file-related tasks
 set path+=**
 
+nnoremap * *``
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Vundle 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -91,10 +94,12 @@ call vundle#rc()
 " let Vundle manage Vundle 
 Plugin 'gmarik/vundle'        " required!
 " original repos on github
-Plugin 'bling/vim-airline'
+Plugin 'altercation/vim-colors-solarized'
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
 Plugin 'scrooloose/nerdtree'
 Plugin 'majutsushi/tagbar'
-Plugin 'kien/ctrlp.vim'
+Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'Valloric/YouCompleteMe'
 Plugin 'mileszs/ack.vim'
 Plugin 'rking/ag.vim'
@@ -105,6 +110,9 @@ Plugin 'ervandew/supertab'
 Plugin 'Townk/vim-autoclose'
 Plugin 'tpope/vim-fugitive'
 Plugin 'vim-scripts/Logcat-syntax-highlighter'
+Plugin 'godlygeek/tabular'
+Plugin 'plasticboy/vim-markdown'
+Plugin 'Chiel92/vim-autoformat'
 
 filetype plugin indent on     " required!
 
@@ -142,11 +150,13 @@ syntax enable
 
 try
     colorscheme desert
+"   colorscheme solarized
 catch
 endtry
 
 set background=dark
 
+let g:vim_markdown_folding_disabled = 0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
@@ -172,13 +182,14 @@ set ai
 set si
 "Wrap lines(default on)
 set wrap
-
+"paste from another application
+set pastetoggle=<F2>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => tabs, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " open new tab page in quickfix window results
-set switchbuf+=usetab,newtab
+"set switchbuf+=usetab,newtab
 
 " Smart way to move between windows
 map <C-j> <C-W>j
@@ -195,7 +206,7 @@ map <leader>tn :tabn<cr>
 
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
-map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+map <leader>te :edit <c-r>=expand("%:p:h")<cr>/
 
 
 """"""""""""""""""""""""""""""
@@ -213,6 +224,18 @@ function! AdjustWindowHeight(minheight, maxheight)
   exe max([min([line("$")+1, a:maxheight]), a:minheight]) . "wincmd _"
 endfunction
 
+" Toggle to open or close the quickfix window
+command -bang -nargs=? QFix call QFixToggle(<bang>0)
+function! QFixToggle(forced)
+  if exists("g:qfix_win") && a:forced == 0
+    cclose
+    unlet g:qfix_win
+  else
+    copen 10
+    let g:qfix_win = bufnr("$")
+  endif
+endfunction
+nnoremap <silent> <F7> :QFix<CR>
 
 """"""""""""""""""""""""""""""
 " => Status line
@@ -292,6 +315,12 @@ function! s:CloseIfOnlyNerdTreeLeft()
   endif
 endfunction
 
+""""""""""""""""""""""""""""""
+" Vundle:airline
+""""""""""""""""""""""""""""""
+let g:airline_theme='luna'
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
 
 """"""""""""""""""""""""""""""
 " Vundle:tagbar
@@ -305,7 +334,13 @@ let g:tagbar_sort = 0
 """"""""""""""""""""""""""""""
 " Vundle:ctrlp
 """"""""""""""""""""""""""""""
-let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files']
+" buffer mode in default
+let g:ctrlp_cmd = 'CtrlPBuffer'
+let g:ctrlp_working_path_mode = 'ra'
+" Use a custom file listing command
+let g:ctrlp_user_command = 'find %s -type f'       " MacOSX/Linux
+" Ignore files in .gitignore
+let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 
 """"""""""""""""""""""""""""""
 " Vundle:YouCompleteMe
@@ -393,6 +428,11 @@ let g:NERDCommentEmptyLines = 1
 let g:NERDTrimTrailingWhitespace = 1
 
 """"""""""""""""""""""""""""""
+" Vundle:vim-markdown
+""""""""""""""""""""""""""""""
+let g:vim_markdown_folding_disabled = 1
+
+""""""""""""""""""""""""""""""
 " Vundle:a.vim
 """"""""""""""""""""""""""""""
 " jump to header file
@@ -420,6 +460,6 @@ if &term =~ "xterm"
   endif
 endif
 
-nnoremap K :vimgrep "<C-R><C-W>" 
+nnoremap K :vimgrep "<C-R><C-W>"
 
 hi CursorLine ctermbg=DarkGray
