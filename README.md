@@ -4,8 +4,8 @@
 ---
 [TOC]
 
-## Installation
-### VIM 8.0
+# Installation
+## VIM 8.0
 ```bash
 # run command to add the PPA
 sudo add-apt-repository ppa:jonathonf/vim
@@ -17,8 +17,8 @@ sudo apt install ppa-purge && sudo ppa-purge ppa:jonathonf/vim
 ref
 : [Vim 8.0 Released! How to install it in Ubuntu 16.04](http://tipsonubuntu.com/2016/09/13/vim-8-0-released-install-ubuntu-16-04)
 
-## basic Usage
-### format
+# basic Usage
+## format
 ```vim
 " fix the indentation
 =
@@ -26,7 +26,7 @@ ref
 gg=G
 ```
 
-### Replace
+## Replace
 ```vim
 " replace the first match on the current line
 :substitute/search/replace/
@@ -41,7 +41,17 @@ gg=G
 ref
 : [Vim 101: Search and Replace](http://usevim.com/2012/03/30/search-and-replace/)
 
-## vimrc
+## search
+use vimgrep to pipe search result of current buffer to Quickfix window, like
+```vim
+:vimgrep "for.*bar" %
+:copen
+```
+ref
+: [pipe search result to other tab/window/buffer in VIM](https://stackoverflow.com/questions/13306664/pipe-search-result-to-other-tab-window-buffer-in-vim)
+
+# Vim Customization
+## basic config
 ### quickfix
 - fitting window height
 ```vim
@@ -75,7 +85,65 @@ ref
 http://vim.wikia.com/wiki/VimTip630
 [Using tab pages](http://vim.wikia.com/wiki/Using_tab_pages)
 
-## Vundles
+### buffers
+With :set hidden, opening a new file when the current buffer has unsaved changes causes files to be hidden instead of closed
+```vim
+set hidden
+```
+refs
+: [Vim Tab Madness. Buffers vs Tabs](http://joshldavis.com/2014/04/05/vim-tab-madness-buffers-vs-tabs/)
+[Vim 101: Set Hidden](https://medium.com/usevim/vim-101-set-hidden-f78800142855)
+
+### 256-color putty
+```vim
+" 256-color putty
+if &term =~ "xterm"
+  " 256 colors
+  let &t_Co = 256
+  " restore screen after quitting
+  let &t_ti = "\<Esc>7\<Esc>[r\<Esc>[?47h"
+  let &t_te = "\<Esc>[?47l\<Esc>8"
+  if has("terminfo")
+    let &t_Sf = "\<Esc>[3%p1%dm"
+    let &t_Sb = "\<Esc>[4%p1%dm"
+  else
+    let &t_Sf = "\<Esc>[3%dm"
+    let &t_Sb = "\<Esc>[4%dm"
+  endif
+endif
+```
+refs
+: [putty vim color scheme](http://vim.wikia.com/wiki/Using_vim_color_schemes_with_Putty)
+
+### Pasting code with syntax coloring in emails
+
+```vim?linenums
+function! MyToHtml(line1, line2)
+  " make sure to generate in the correct format
+  let old_css = 1
+  if exists('g:html_use_css')
+    let old_css = g:html_use_css
+  endif
+  let g:html_use_css = 0
+
+  " generate and delete unneeded lines
+  exec a:line1.','.a:line2.'TOhtml'
+  %g/<body/normal k$dgg
+
+  " convert body to a table
+  %s/<body\s*\(bgcolor="[^"]*"\)\s*text=\("[^"]*"\)\s*>/<table \1 cellPadding=0><tr><td><font color=\2>/
+  %s#</body>\(.\|\n\)*</html>#\='</font></td></tr></table>'#i
+
+  " restore old setting
+  let g:html_use_css = old_css
+endfunction
+command! -range=% MyToHtml :call MyToHtml(<line1>,<line2>)
+```
+refs
+: [wiki](http://vim.wikia.com/wiki/Pasting_code_with_syntax_coloring_in_emails)
+
+
+## Plugins
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
@@ -95,6 +163,8 @@ Plugin 'vim-scripts/Logcat-syntax-highlighter'
 Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
 Plugin 'Chiel92/vim-autoformat'
+Plugin 'rhysd/vim-clang-format'
+Plugin 'easymotion/vim-easymotion'
 
 ### cscope
 #### config
@@ -154,6 +224,13 @@ cscope -Rbq
 - prompt header file not found when open source file
 删除.ycm_extra_conf.py配置里的`'-I’, '.'`
 
+- YCM doesn't complete any identifier that exists in a header file
+That is the right behaviour, you're not seeing anything strange. The identifier completer will propose candidates from the currently open buffers, so if you don't have the headers file as open buffers you will not get identifiers from that file as candidates. 
+
+refs
+: [#1624](https://github.com/Valloric/YouCompleteMe/issues/1624)
+[how to enable semantic complete when typing](https://zhuanlan.zhihu.com/p/33046090)
+
 ### syntastic
 #### FAQ:
 - Including header files recursively for syntastic
@@ -172,3 +249,34 @@ Diff between current file and current file 3 commits ago:
 ```vim
 :Gdiff ~3
 ```
+
+### vim-clang-format
+```vim
+let g:clang_format#style_options = {
+    \ 'ColumnLimit' : "0",
+    \ 'IndentWidth' : 8,
+    \ 'UseTab' : 'Always',
+    \ 'BreakBeforeBraces' : 'Linux',
+    \ 'AllowShortIfStatementsOnASingleLine' : 'false',
+    \ 'AllowShortLoopsOnASingleLine' : 'false',
+    \ 'AllowShortFunctionsOnASingleLine' : 'false',
+    \ 'IndentCaseLabels' : 'false',
+    \ 'AlignEscapedNewlinesLeft' : 'false',
+    \ 'AlignTrailingComments' : 'true',
+    \ 'AllowAllParametersOfDeclarationOnNextLine' : 'false',
+    \ 'AlignAfterOpenBracket' : 'true',
+    \ 'SpaceAfterCStyleCast' : 'false',
+    \ 'MaxEmptyLinesToKeep' : 2,
+    \ 'BreakBeforeBinaryOperators' : 'NonAssignment',
+    \ 'SortIncludes' : 'false',
+    \ 'ContinuationIndentWidth' : 8,
+    \ 'AlignConsecutiveDeclarations' : 'false',
+    \ 'AlignConsecutiveAssignments' : 'false',
+    \ 'DerivePointerAlignment' : 'false',
+    \ 'PointerAlignment' : 'Right',
+    \}
+```
+PointerAlignment: Right is unfortunately not implemented yet.(see refs)
+refs
+: [CLANG-FORMAT STYLE OPTIONS](https://clang.llvm.org/docs/ClangFormatStyleOptions.html)
+  [clang-format: Align asterisk (\*) of pointer declaration with variable name Ask](https://stackoverflow.com/questions/38392889/clang-format-align-asterisk-of-pointer-declaration-with-variable-name)

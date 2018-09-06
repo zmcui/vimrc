@@ -27,6 +27,9 @@
 " => Vundle:tagbar
 " => Vundle:ctrlp
 " => Vundle:YouCompleteMe
+" => Vundle:clang_complete
+" => Vundle:ultisnips
+" => Vundle:vim-snippets
 " => Vundle:ack.vim
 " => Vundle:ag.vim
 " => Vundle:cscope
@@ -36,7 +39,11 @@
 " => Vundle:supertab
 " => Vundle:vim-autoclose
 " => Vundle:vim-fugitive
-" => Vundle:vim-markdown
+" => Vundle:vim-autoformat
+" => Vundle:vim-clang-format
+" => Vundle:vim-easymotion
+" => vundle:verilog_systemverilog.vim
+" => vundle:DoxygenToolkit.vim
 "
 " Description:
 " This is the personal .vimrc file of zongmin.cui
@@ -46,10 +53,11 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set nocompatible		        "Be iMproved
-set history=1000	        	"Lines of history VIM has to remember
-set showcmd                 "Show incomplete cmds down the bottom
-set showmode                "Show current mode down the bottom
+set nocompatible 	" Be iMproved
+set history=1000      	" Lines of history VIM has to remember
+set showcmd 		" Show incomplete cmds down the bottom
+set showmode 		" Show current mode down the bottom
+set backspace=2 	" make backspace work like most other programs
 
 " Uncomment the following to have Vim jump to the last position when
 " reopening a file
@@ -63,7 +71,8 @@ let mapleader=","
 
 " Fast saving
 nmap <leader>w :w!<cr>
-nmap <leader>q :bd<cr>
+"nmap <leader>q :bd<cr>
+nmap <leader>q :bp<cr>:bd #<cr>
 
 " Auto-reload your vimrc
 augroup reload_vimrc " {
@@ -81,7 +90,8 @@ set clipboard=unnamedplus
 " Provides tab-completion for all file-related tasks
 set path+=**
 
-nnoremap * *``
+"nnoremap * *``
+nmap <leader>* :vimgrep /<C-R><C-W>/j %<CR>:copen<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Vundle 
@@ -101,9 +111,12 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'majutsushi/tagbar'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'Valloric/YouCompleteMe'
+" Plugin 'Rip-Rip/clang_complete'
+Plugin 'SirVer/ultisnips'
+Plugin 'honza/vim-snippets'
 Plugin 'mileszs/ack.vim'
 Plugin 'rking/ag.vim'
-Plugin 'scrooloose/syntastic'
+" Plugin 'scrooloose/syntastic'
 Plugin 'scrooloose/nerdcommenter'
 Plugin 'vim-scripts/a.vim'
 Plugin 'ervandew/supertab'
@@ -111,8 +124,11 @@ Plugin 'Townk/vim-autoclose'
 Plugin 'tpope/vim-fugitive'
 Plugin 'vim-scripts/Logcat-syntax-highlighter'
 Plugin 'godlygeek/tabular'
-Plugin 'plasticboy/vim-markdown'
 Plugin 'Chiel92/vim-autoformat'
+Plugin 'rhysd/vim-clang-format'
+Plugin 'easymotion/vim-easymotion'
+Plugin 'vhda/verilog_systemverilog.vim'
+Plugin 'vim-scripts/DoxygenToolkit.vim'
 
 filetype plugin indent on     " required!
 
@@ -148,15 +164,13 @@ endif
 " Enable syntax highlighting
 syntax enable 
 
-try
-    colorscheme desert
-"   colorscheme solarized
-catch
-endtry
+if has("gui_running")
+  colorscheme solarized
+else
+  colorscheme desert
+endif
 
 set background=dark
-
-let g:vim_markdown_folding_disabled = 0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
@@ -190,6 +204,7 @@ set pastetoggle=<F2>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " open new tab page in quickfix window results
 "set switchbuf+=usetab,newtab
+set hidden
 
 " Smart way to move between windows
 map <C-j> <C-W>j
@@ -224,18 +239,18 @@ function! AdjustWindowHeight(minheight, maxheight)
   exe max([min([line("$")+1, a:maxheight]), a:minheight]) . "wincmd _"
 endfunction
 
-" Toggle to open or close the quickfix window
-command -bang -nargs=? QFix call QFixToggle(<bang>0)
-function! QFixToggle(forced)
-  if exists("g:qfix_win") && a:forced == 0
-    cclose
-    unlet g:qfix_win
-  else
-    copen 10
-    let g:qfix_win = bufnr("$")
-  endif
-endfunction
-nnoremap <silent> <F7> :QFix<CR>
+" " Toggle to open or close the quickfix window
+" command -bang -nargs=? QFix call QFixToggle(<bang>0)
+" function! QFixToggle(forced)
+"   if exists("g:qfix_win") && a:forced == 0
+"     cclose
+"     unlet g:qfix_win
+"   else
+"     copen 10
+"     let g:qfix_win = bufnr("$")
+"   endif
+" endfunction
+" nnoremap <silent> <F7> :QFix<CR>
 
 """"""""""""""""""""""""""""""
 " => Status line
@@ -318,7 +333,12 @@ endfunction
 """"""""""""""""""""""""""""""
 " Vundle:airline
 """"""""""""""""""""""""""""""
-let g:airline_theme='luna'
+if has("gui_running")
+  let g:airline_theme='solarized'
+  let g:airline_solarized_bg='dark'
+else
+  let g:airline_theme='luna'
+endif
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_nr_show = 1
 
@@ -341,14 +361,51 @@ let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_user_command = 'find %s -type f'       " MacOSX/Linux
 " Ignore files in .gitignore
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
+let g:ctrlp_match_window = 'top'
 
 """"""""""""""""""""""""""""""
 " Vundle:YouCompleteMe
 """"""""""""""""""""""""""""""
-"let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+set completeopt=menu,menuone "no completion in the preview window"
+let g:ycm_add_preview_to_completeopt = 0 "no add preview"
+" set splitbelow
+" let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
 let g:ycm_confirm_extra_conf = 0
-nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
-let g:ycm_collect_identifiers_from_tags_files = 1
+let g:ycm_collect_identifiers_from_tags_files = 0
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_seed_identifiers_with_syntax = 1
+let g:ycm_show_diagnostics_ui = 0
+let g:ycm_autoclose_preview_window_after_insertion = 1
+let g:ycm_autoclose_preview_window_after_completion = 1
+" make YCM compatible with UltiSnips (using supertab)
+let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+let g:SuperTabDefaultCompletionType = '<C-n>'
+" trigger semantic complete when type
+" let g:ycm_semantic_triggers =  {
+"                         \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+"                         \ 'cs,lua,javascript': ['re!\w{2}'],
+"                         \ }
+highlight PMenu ctermfg=0 ctermbg=242 guifg=black guibg=darkgrey
+highlight PMenuSel ctermfg=242 ctermbg=8 guifg=darkgrey guibg=black
+
+""""""""""""""""""""""""""""""
+" Vundle:clang_complete
+""""""""""""""""""""""""""""""
+let g:clang_library_path='/usr/lib/llvm-3.8/lib/libclang.so'
+" show function parameters
+let g:clang_snippets = 1
+let g:clang_snippets_engine = 'ultisnips'
+
+""""""""""""""""""""""""""""""
+" Vundle:ultisnips
+""""""""""""""""""""""""""""""
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<c-j>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+" If you want :UltiSnipsEdit to split your window.
+let g:UltiSnipsEditSplit="vertical"
 
 """"""""""""""""""""""""""""""
 " Vundle:ack
@@ -396,18 +453,18 @@ nmap <leader>so :copen<cr>
 """"""""""""""""""""""""""""""
 " Vundle:syntastic
 """"""""""""""""""""""""""""""
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-set statusline+=%*
-
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-"let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_c_check_header = 0
-let g:syntastic_cpp_check_header = 0
-let g:syntastic_c_config_file = '.systastic_c_config'
-let g:syntastic_cpp_config_file = '.systastic_cpp_config'
+" set statusline+=%#warningmsg#
+" set statusline+=%{SyntasticStatuslineFlag()}
+" set statusline+=%*
+"
+" let g:syntastic_always_populate_loc_list = 1
+" let g:syntastic_auto_loc_list = 1
+" "let g:syntastic_check_on_open = 1
+" let g:syntastic_check_on_wq = 0
+" let g:syntastic_c_check_header = 0
+" let g:syntastic_cpp_check_header = 0
+" let g:syntastic_c_config_file = '.systastic_c_config'
+" let g:syntastic_cpp_config_file = '.systastic_cpp_config'
 
 """"""""""""""""""""""""""""""
 " Vundle:nerdcommenter
@@ -415,7 +472,7 @@ let g:syntastic_cpp_config_file = '.systastic_cpp_config'
 "Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
 " Use compact syntax for prettified multi-line comments
-"let g:NERDCompactSexyComs = 1
+" let g:NERDCompactSexyComs = 1
 " Align line-wise comment delimiters flush left instead of following code indentation
 let g:NERDDefaultAlign = 'left'
 " Set a language to use its alternate delimiters by default
@@ -428,11 +485,6 @@ let g:NERDCommentEmptyLines = 1
 let g:NERDTrimTrailingWhitespace = 1
 
 """"""""""""""""""""""""""""""
-" Vundle:vim-markdown
-""""""""""""""""""""""""""""""
-let g:vim_markdown_folding_disabled = 1
-
-""""""""""""""""""""""""""""""
 " Vundle:a.vim
 """"""""""""""""""""""""""""""
 " jump to header file
@@ -442,7 +494,35 @@ nmap <F4> :AT<cr>
 " => logcat
 """"""""""""""""""""""""""""""
 au BufRead,BufNewFile *.logcat set filetype=logcat
-au BufRead,BufNewFile *.txt set filetype=logcat
+au BufRead,BufNewFile *.dmsg set filetype=dmsg
+
+""""""""""""""""""""""""""""""
+" Vundle: rhysd/vim-clang-format
+""""""""""""""""""""""""""""""
+let g:clang_format#style_options = {
+    \ 'ColumnLimit' : "0",
+    \ 'IndentWidth' : 8,
+    \ 'UseTab' : 'Always',
+    \ 'BreakBeforeBraces' : 'Linux',
+    \ 'AllowShortIfStatementsOnASingleLine' : 'false',
+    \ 'AllowShortLoopsOnASingleLine' : 'false',
+    \ 'AllowShortFunctionsOnASingleLine' : 'false',
+    \ 'IndentCaseLabels' : 'false',
+    \ 'AlignEscapedNewlinesLeft' : 'false',
+    \ 'AlignTrailingComments' : 'true',
+    \ 'SpacesBeforeTrailingComments' : 3,
+    \ 'AllowAllParametersOfDeclarationOnNextLine' : 'false',
+    \ 'AlignAfterOpenBracket' : 'true',
+    \ 'SpaceAfterCStyleCast' : 'false',
+    \ 'MaxEmptyLinesToKeep' : 2,
+    \ 'BreakBeforeBinaryOperators' : 'NonAssignment',
+    \ 'SortIncludes' : 'false',
+    \ 'ContinuationIndentWidth' : 8,
+    \ 'AlignConsecutiveDeclarations' : 'false',
+    \ 'AlignConsecutiveAssignments' : 'false',
+    \ 'DerivePointerAlignment' : 'false',
+    \ 'PointerAlignment' : 'Right',
+    \}
 
 " 256-color putty
 if &term =~ "xterm"
@@ -460,6 +540,54 @@ if &term =~ "xterm"
   endif
 endif
 
-nnoremap K :vimgrep "<C-R><C-W>"
-
 hi CursorLine ctermbg=DarkGray
+
+"
+" Causes all comment folds to be opened and closed using z[ and z]
+" respectively.
+"
+" Causes all block folds to be opened and closed using z{ and z} respectively.
+"
+
+"function FoldOnlyMatching(re, op)
+"	mark Z
+"	normal gg
+"	let s:lastline = -1
+"	while s:lastline != line('.')
+"		if match(getline(line('.')), a:re) != -1
+"			exec 'normal ' . a:op
+"		endif
+"		let s:lastline = line('.')
+"		normal zj
+"	endwhile
+"	normal 'Z
+"	unlet s:lastline
+"endfunction
+
+nnoremap <silent> <leader>z[ :call FoldOnlyMatching('/[*][*]', 'zo')<CR>
+nnoremap <silent> <leader>z] :call FoldOnlyMatching('/[*][*]', 'zc')<CR>
+nnoremap <silent> <leader>z{ :call FoldOnlyMatching('[ \t]*{', 'zo')<CR>
+nnoremap <silent> <leader>z} :call FoldOnlyMatching('[ \t]*{', 'zc')<CR>
+
+let g:html_use_xhtml = 1
+
+function! MyToHtml(line1, line2)
+  " make sure to generate in the correct format
+  let old_css = 1
+  if exists('g:html_use_css')
+    let old_css = g:html_use_css
+  endif
+  let g:html_use_css = 0
+
+  " generate and delete unneeded lines
+  exec a:line1.','.a:line2.'TOhtml'
+  %g/<body/normal k$dgg
+
+  " convert body to a table
+  %s/<body\s*\(bgcolor="[^"]*"\)\s*text=\("[^"]*"\)\s*>/<table \1 cellPadding=0><tr><td><font color=\2>/
+  %s#</body>\(.\|\n\)*</html>#\='</font></td></tr></table>'#i
+
+  " restore old setting
+  let g:html_use_css = old_css
+endfunction
+command! -range=% MyToHtml :call MyToHtml(<line1>,<line2>)

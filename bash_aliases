@@ -12,6 +12,8 @@ alias gts='git status .'
 alias gtr='cd "$(git rev-parse --show-toplevel)"'
 # open (in vim) all modified files in a git rep
 alias diffvim='vim `git diff --name-only` -p'
+# to see if patch would apply cleanly in the first place
+alias p1='patch -p1 -g1 --dry-run'
 
 # mm replace libraries 
 alias mmreplace='(mm | grep "^Install:" || mm -B | grep "^Install:") | sed -e"s/^Install: //" | grep -ve "\(\.txt\|\.data\|\.bin\|\.yuv\)$" |
@@ -46,9 +48,9 @@ share()
 alias ch='echo "tar -czf xx.tar.gz xx" | echo "tar -xzvf xx.tar.gz" | echo "tar -cf xx.tar xx" | echo "tar -xf xx.tar" | echo "vimdiff do dp [c ]c [[ ]]" | echo "cscope -Rbq" | echo "git push ssh://zongmincui@source.asrmicro.com:29418/kernel/common HEAD:refs/for/fvp_ve_aemv8a_dev_4.4" | echo "git push ssh://zongmincui@source.asrmicro.com:29418/baremetal-test HEAD:refs/for/master:" | echo "git rebase -i HEAD~2"| echo "smbclient //fileserver/public-share -U asrmicro/zongmincui"'
 
 # mv to trash
-alias rm=trash
-alias rl='ls ~/.trash'
-alias ur=undelfile
+# alias rm=trash
+# alias rl='ls ~/.trash'
+# alias ur=undelfile
 
 undelfile()
 {
@@ -298,3 +300,7 @@ function docrash()
 	CRASH_EXTENSIONS=~/Workspace/ramdump/devtools/crash_analysis_suite/extensions/ ~/Workspace/ramdump/devtools/crash_analysis_suite/bin/crash -x "$1" "$2"
 }
 
+backdoor()
+{
+    /home/zongmincui/bin/backdoor "$1" "$2" "$3"
+}
