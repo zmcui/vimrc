@@ -1,5 +1,5 @@
 # Personal Vimrc Guide
-`by iryan.cui@gmail.com`
+https://github.com/zmcui/vimrc
 
 ---
 [TOC]
@@ -219,6 +219,28 @@ cscope -Rbq
 #### config
 - `g:ycm_confirm_extra_conf`
  disable prompt if '.ycm_extra_conf.py' is safe to be loaded everytime
+ 
+- g:ycm_use_clangd
+```bash
+# install YCM with both libclang and clangd enabled
+cd ~/.vim/bundle/YouCompleteMe
+./install.py --clang-completer
+./install.py --clangd-completer
+```
+当我用编译命令使能了libclang和clangd之后，并不知道当前ycm用了哪个，所以一直debug 下面的错误
+其实是==ycm_extra_conf.py: Currently clangd does not support ycm_extra_conf.py therefore you must have a compilation database, whereas libclang can work with both.==
+```
+I[16:14:11.825] <-- initialize("1")
+I[16:14:11.825] --> reply("1")
+I[16:14:11.826] <-- initialized
+E[16:14:11.826] Error -32601: method not found
+I[16:14:11.826] <-- workspace/didChangeConfiguration
+I[16:14:11.826] <-- textDocument/didOpen
+I[16:14:11.826] Failed to find compilation database for /home/zongmincui/work/baremetal-test/ctest/modules/mars10isp/mars10_drv.c
+I[16:14:11.826] Updating file /home/zongmincui/work/baremetal-test/ctest/modules/mars10isp/mars10_drv.c with command [/home/zongmincui/work/baremetal-test/ctest/modules/mars10isp] clang /home/zongmincui/work/baremetal-test/ctest/modules/mars10isp/mars10_drv.c -resource-dir=/home/zongmincui/.vim/bundle/YouCompleteMe/third_party/ycmd/third_party/clang/lib/clang/7.0.0
+I[16:14:11.837] Dropped diagnostic outside main file: : too many errors emitted, stopping now
+```
+
 
 #### FAQ:
 - prompt header file not found when open source file

@@ -27,7 +27,6 @@
 " => Vundle:tagbar
 " => Vundle:ctrlp
 " => Vundle:YouCompleteMe
-" => Vundle:clang_complete
 " => Vundle:ultisnips
 " => Vundle:vim-snippets
 " => Vundle:ack.vim
@@ -111,6 +110,7 @@ Plugin 'scrooloose/nerdtree'
 Plugin 'majutsushi/tagbar'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'Valloric/YouCompleteMe'
+Plugin 'rdnetto/YCM-Generator'
 " Plugin 'Rip-Rip/clang_complete'
 Plugin 'SirVer/ultisnips'
 Plugin 'honza/vim-snippets'
@@ -122,7 +122,7 @@ Plugin 'vim-scripts/a.vim'
 Plugin 'ervandew/supertab'
 Plugin 'Townk/vim-autoclose'
 Plugin 'tpope/vim-fugitive'
-Plugin 'vim-scripts/Logcat-syntax-highlighter'
+" Plugin 'vim-scripts/Logcat-syntax-highlighter'
 Plugin 'godlygeek/tabular'
 Plugin 'Chiel92/vim-autoformat'
 Plugin 'rhysd/vim-clang-format'
@@ -366,8 +366,9 @@ let g:ctrlp_match_window = 'top'
 """"""""""""""""""""""""""""""
 " Vundle:YouCompleteMe
 """"""""""""""""""""""""""""""
-set completeopt=menu,menuone "no completion in the preview window"
-let g:ycm_add_preview_to_completeopt = 0 "no add preview"
+set completeopt=menu,menuone "no completion in the preview window
+let g:ycm_add_preview_to_completeopt = 0 "no add preview
+let g:ycm_use_clangd = 0
 " set splitbelow
 " let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
 let g:ycm_confirm_extra_conf = 0
@@ -388,14 +389,6 @@ let g:SuperTabDefaultCompletionType = '<C-n>'
 "                         \ }
 highlight PMenu ctermfg=0 ctermbg=242 guifg=black guibg=darkgrey
 highlight PMenuSel ctermfg=242 ctermbg=8 guifg=darkgrey guibg=black
-
-""""""""""""""""""""""""""""""
-" Vundle:clang_complete
-""""""""""""""""""""""""""""""
-let g:clang_library_path='/usr/lib/llvm-3.8/lib/libclang.so'
-" show function parameters
-let g:clang_snippets = 1
-let g:clang_snippets_engine = 'ultisnips'
 
 """"""""""""""""""""""""""""""
 " Vundle:ultisnips
@@ -456,7 +449,7 @@ nmap <leader>so :copen<cr>
 " set statusline+=%#warningmsg#
 " set statusline+=%{SyntasticStatuslineFlag()}
 " set statusline+=%*
-"
+" 
 " let g:syntastic_always_populate_loc_list = 1
 " let g:syntastic_auto_loc_list = 1
 " "let g:syntastic_check_on_open = 1
@@ -478,7 +471,7 @@ let g:NERDDefaultAlign = 'left'
 " Set a language to use its alternate delimiters by default
 let g:NERDAltDelims_java = 1
 " Add your own custom formats or override the defaults
-"let g:NERDCustomDelimiters = { 'c': { 'left': '/**','right': '*/' } }
+let g:NERDCustomDelimiters = { 'k': { 'left': '//','right': '' } }
 " Allow commenting and inverting empty lines (useful when commenting a region)
 let g:NERDCommentEmptyLines = 1
 " Enable trimming of trailing whitespace when uncommenting
