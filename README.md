@@ -85,6 +85,15 @@ ref
 http://vim.wikia.com/wiki/VimTip630
 [Using tab pages](http://vim.wikia.com/wiki/Using_tab_pages)
 
+- cursor
+```vim
+" Don't move cursor to start of line after various commands.
+set nostartofline
+```
+refs
+: [Keep Window & Cursor Position When Switching Buffers](https://www.reddit.com/r/vim/comments/7c3bfk/keep_window_cursor_position_when_switching_buffers/)
+[Don't move cursor to start of line after commands](https://github.com/bobwhitelock/dotfiles/commit/0bf674ccdadc89201a996a669b5ce3a9fb2fcf41)
+
 ### buffers
 With :set hidden, opening a new file when the current buffer has unsaved changes causes files to be hidden instead of closed
 ```vim
@@ -216,6 +225,9 @@ cscope -Rbq
 :copen
 ```
 ### YouCompleteMe
+
+> For a more elaborate example, see ycmd's own[ .ycm_extra_conf.py](https://raw.githubusercontent.com/Valloric/ycmd/66030cd94299114ae316796f3cad181cac8a007c/.ycm_extra_conf.py). You should be able to use it as a starting point
+
 #### config
 - `g:ycm_confirm_extra_conf`
  disable prompt if '.ycm_extra_conf.py' is safe to be loaded everytime
@@ -252,6 +264,12 @@ That is the right behaviour, you're not seeing anything strange. The identifier 
 refs
 : [#1624](https://github.com/Valloric/YouCompleteMe/issues/1624)
 [how to enable semantic complete when typing](https://zhuanlan.zhihu.com/p/33046090)
+
+- Navigating the Linux Kernel source tree with YouCompleteMe
+the [bear](https://github.com/rizsotto/Bear) utility takes the approach of intercepting the build calls, gather the relevant info and generate a complete compilation database. 
+
+refs
+: [Navigating the Linux Kernel source tree with YouCompleteMe](https://www.scalyr.com/blog/searching-1tb-sec-systems-engineering-before-algorithms/)
 
 ### syntastic
 #### FAQ:
@@ -302,3 +320,35 @@ PointerAlignment: Right is unfortunately not implemented yet.(see refs)
 refs
 : [CLANG-FORMAT STYLE OPTIONS](https://clang.llvm.org/docs/ClangFormatStyleOptions.html)
   [clang-format: Align asterisk (\*) of pointer declaration with variable name Ask](https://stackoverflow.com/questions/38392889/clang-format-align-asterisk-of-pointer-declaration-with-variable-name)
+
+#### FAQ
+- Can clang-format align a block of #defines for me?
+目前clang-format还支持不了宏定义的对齐, 从llvm的讨论看，比较有争议
+
+refs
+: [stachoverflow: Can clang-format align a block of #defines for me?](https://stackoverflow.com/questions/38620019/can-clang-format-align-a-block-of-defines-for-me)
+[clang-format: Add new style option AlignConsecutiveMacros](https://reviews.llvm.org/D28462?id=93341)
+
+### easymotion
+[github](https://github.com/easymotion/vim-easymotion)
+
+#### uage
+跳转到当前光标前后的位置(w/b)
+```vim
+<leader><leader>w
+<leader><leader>b
+```
+搜索跳转(s)
+```vim
+<leader><leader>s
+```
+行级跳转(jk)
+```vim
+<leader><leader>j
+<leader><leader>k
+```
+行内跳转(hl)
+```vim
+<leader><leader>h
+<leader><leader>l
+```

@@ -223,6 +223,8 @@ map <leader>tn :tabn<cr>
 " Super useful when editing files in the same directory
 map <leader>te :edit <c-r>=expand("%:p:h")<cr>/
 
+" Don't move cursor to start of line after various commands.
+set nostartofline
 
 """"""""""""""""""""""""""""""
 " => quickfix

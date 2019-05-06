@@ -1,6 +1,6 @@
 #user defined 
 #grep 
-alias gp='grep -nr --exclude={tags,cscope.out}' 
+alias gp='egrep -nr --exclude={tags,*.out} --exclude-dir={\.git,obj}' 
 #dirs operation command 
 alias ..='cd ..' 
 alias ...='cd ../..' 
