@@ -22,27 +22,7 @@
 " => Paired character
 " => Timestamp
 " => logcat
-"
-" => Vundle:NerdTree
-" => Vundle:tagbar
-" => Vundle:ctrlp
-" => Vundle:YouCompleteMe
-" => Vundle:ultisnips
-" => Vundle:vim-snippets
-" => Vundle:ack.vim
-" => Vundle:ag.vim
-" => Vundle:cscope
-" => Vundle:syntastic
-" => Vundle:nerdcommenter
-" => Vundle:a.vim
-" => Vundle:supertab
-" => Vundle:vim-autoclose
-" => Vundle:vim-fugitive
-" => Vundle:vim-autoformat
-" => Vundle:vim-clang-format
-" => Vundle:vim-easymotion
-" => vundle:verilog_systemverilog.vim
-" => vundle:DoxygenToolkit.vim
+" => Plugins
 "
 " Description:
 " This is the personal .vimrc file of zongmin.cui
@@ -97,11 +77,14 @@ nmap <leader>* :vimgrep /<C-R><C-W>/j %<CR>:copen<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 filetype off                  " required!
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
 
-" let Vundle manage Vundle 
-Plugin 'gmarik/vundle'        " required!
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
 " original repos on github
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'vim-airline/vim-airline'
@@ -109,29 +92,35 @@ Plugin 'vim-airline/vim-airline-themes'
 Plugin 'scrooloose/nerdtree'
 Plugin 'majutsushi/tagbar'
 Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'Valloric/YouCompleteMe'
-Plugin 'rdnetto/YCM-Generator'
-" Plugin 'Rip-Rip/clang_complete'
-Plugin 'SirVer/ultisnips'
-Plugin 'honza/vim-snippets'
-Plugin 'mileszs/ack.vim'
-Plugin 'rking/ag.vim'
-" Plugin 'scrooloose/syntastic'
-Plugin 'scrooloose/nerdcommenter'
 Plugin 'vim-scripts/a.vim'
-Plugin 'ervandew/supertab'
-Plugin 'Townk/vim-autoclose'
 Plugin 'tpope/vim-fugitive'
-" Plugin 'vim-scripts/Logcat-syntax-highlighter'
-Plugin 'godlygeek/tabular'
-Plugin 'Chiel92/vim-autoformat'
-Plugin 'rhysd/vim-clang-format'
-Plugin 'easymotion/vim-easymotion'
+Plugin 'vim-scripts/doxygentoolkit.vim'
+
+" Plugin 'Shougo/echodoc.vim'
+Plugin 'valloric/youcompleteme'
+" Plugin 'rdnetto/ycm-generator'
+" Plugin 'rip-rip/clang_complete'
+Plugin 'ervandew/supertab'
+Plugin 'sirver/ultisnips'
+Plugin 'honza/vim-snippets'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'townk/vim-autoclose'
+
 Plugin 'vhda/verilog_systemverilog.vim'
-Plugin 'vim-scripts/DoxygenToolkit.vim'
+Plugin 'octol/vim-cpp-enhanced-highlight'
 
-filetype plugin indent on     " required!
+" Plugin 'w0rp/ale'
 
+Plugin 'chiel92/vim-autoformat'
+Plugin 'rhysd/vim-clang-format'
+Plugin 'godlygeek/tabular'
+
+Plugin 'wsdjeg/FlyGrep.vim'
+Plugin 'easymotion/vim-easymotion'
+
+
+call vundle#end()            " required
+filetype plugin indent on    " required
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
@@ -348,6 +337,7 @@ let g:airline#extensions#tabline#buffer_nr_show = 1
 " Vundle:tagbar
 """"""""""""""""""""""""""""""
 nnoremap <silent> <F8> :TagbarToggle<CR>
+
 let g:tagbar_left = 1
 let g:tagbar_width=30
 let g:tagbar_autofocus=1
@@ -370,14 +360,15 @@ let g:ctrlp_match_window = 'top'
 """"""""""""""""""""""""""""""
 set completeopt=menu,menuone "no completion in the preview window
 let g:ycm_add_preview_to_completeopt = 0 "no add preview
-let g:ycm_use_clangd = 0
+let g:ycm_use_clangd = 1 	"libclang/clangd
 " set splitbelow
-" let g:ycm_global_ycm_extra_conf = '~/.vim/.ycm_extra_conf.py'
+let g:ycm_global_ycm_extra_conf='/home/zongmincui/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
 let g:ycm_confirm_extra_conf = 0
 let g:ycm_collect_identifiers_from_tags_files = 0
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
 let g:ycm_seed_identifiers_with_syntax = 1
 let g:ycm_show_diagnostics_ui = 0
+let g:ycm_enable_diagnostic_signs = 0 
 let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_autoclose_preview_window_after_completion = 1
 " make YCM compatible with UltiSnips (using supertab)
@@ -392,6 +383,14 @@ let g:SuperTabDefaultCompletionType = '<C-n>'
 highlight PMenu ctermfg=0 ctermbg=242 guifg=black guibg=darkgrey
 highlight PMenuSel ctermfg=242 ctermbg=8 guifg=darkgrey guibg=black
 
+let g:ycm_filetype_whitelist = { 
+			\ "c":1,
+			\ "cpp":1, 
+			\ "objc":1,
+			\ "sh":1,
+			\ "zsh":1,
+			\ }
+
 """"""""""""""""""""""""""""""
 " Vundle:ultisnips
 """"""""""""""""""""""""""""""
@@ -403,16 +402,9 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsEditSplit="vertical"
 
 """"""""""""""""""""""""""""""
-" Vundle:ack
+" Vundle: FlyGrep.vim
 """"""""""""""""""""""""""""""
-let g:ackhighlight=1
-"let g:ack_autofold_results=1
-
-""""""""""""""""""""""""""""""
-" Vundle:ag
-""""""""""""""""""""""""""""""
-let g:ag_highlight=1
-nnoremap <silent><F3> :Ag!<CR>
+nnoremap <C-F> :FlyGrep<CR>
 
 """"""""""""""""""""""""""""""
 " Vundle:cscope
@@ -460,7 +452,31 @@ nmap <leader>so :copen<cr>
 " let g:syntastic_cpp_check_header = 0
 " let g:syntastic_c_config_file = '.systastic_c_config'
 " let g:syntastic_cpp_config_file = '.systastic_cpp_config'
+"
+""""""""""""""""""""""""""""""
+" Vundle:ale
+""""""""""""""""""""""""""""""
+let g:ale_linters_explicit = 1
+let g:ale_completion_delay = 500
+let g:ale_echo_delay = 20
+let g:ale_lint_delay = 500
+let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+let g:ale_lint_on_text_changed = 'normal'
+let g:ale_lint_on_insert_leave = 1
+let g:airline#extensions#ale#enabled = 1
 
+let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
+let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
+let g:ale_c_cppcheck_options = ''
+let g:ale_cpp_cppcheck_options = ''
+
+let g:ale_sign_error = "\ue009\ue009"
+hi! clear SpellBad
+hi! clear SpellCap
+hi! clear SpellRare
+hi! SpellBad gui=undercurl guisp=red
+hi! SpellCap gui=undercurl guisp=blue
+hi! SpellRare gui=undercurl guisp=magenta
 """"""""""""""""""""""""""""""
 " Vundle:nerdcommenter
 """"""""""""""""""""""""""""""

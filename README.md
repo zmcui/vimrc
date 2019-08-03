@@ -1,4 +1,9 @@
 # Personal Vimrc Guide
+Rev|Date|Author|Description
+---|----------|----------|---------------
+A  |2015.01.13|zongmincui|start up
+B  |2019.07.31|zongmincui|vim8 update
+
 https://github.com/zmcui/vimrc
 
 ---
@@ -151,28 +156,84 @@ command! -range=% MyToHtml :call MyToHtml(<line1>,<line2>)
 refs
 : [wiki](http://vim.wikia.com/wiki/Pasting_code_with_syntax_coloring_in_emails)
 
+### Soure Code Tagging System
+#### Ctags
+```bash
+# generate tags under current dir
+ctags -R *
+```
+`crtl ]`: jump to definition of the function call which the cursor point to
+`ctrl t`: go bach to where you came from
+
+refs
+: [VIM WITH CTAGS](https://linux.byexamples.com/archives/177/vim-with-ctags/)
+
+#### cscope
+Cscope is a very powerful interface allowing you to easily navigate C-like code files.
+```bash
+sudo apt install cscope
+```
+
+`s`   symbol: find all references to the token under cursor
+`g`   global: find global definition(s) of the token under cursor
+`c`   calls:  find all calls to the function name under cursor
+`t`   text:   find all instances of the text under cursor
+`e`   egrep:  egrep search for the word under cursor
+`f`   file:   open the filename under cursor
+`i`   includes: find files that include the filename under cursor
+`d`   called: find functions that function under cursor calls
+
+#### Gtags
+
+```bash
+# generate the GTAGS, GRTAGS, and GPATH files
+gtags
+```
+
+refs
+: [GNU Global](https://www.gnu.org/software/global/)
+[GNU GLOBAL, THE PROGRAMMER’S FRIEND](https://linux.byexamples.com/archives/538/gnu-global-the-programmers-friend)
 
 ## Plugins
+[VimAwesome](https://vimawesome.com/)
+### Plugin Manager
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'junegunn/vim-plug'
+### Interface
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
 Plugin 'scrooloose/nerdtree'
 Plugin 'majutsushi/tagbar'
 Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'Valloric/YouCompleteMe'
-Plugin 'mileszs/ack.vim'
-Plugin 'rking/ag.vim'
-Plugin 'scrooloose/syntastic'
-Plugin 'scrooloose/nerdcommenter'
 Plugin 'vim-scripts/a.vim'
-Plugin 'ervandew/supertab'
-Plugin 'Townk/vim-autoclose'
 Plugin 'tpope/vim-fugitive'
+Plugin 'vim-scripts/doxygentoolkit.vim'
+### IntelliSense 
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'rdnetto/ycm-generator'
+Plugin 'rip-rip/clang_complete'
+Plugin 'ervandew/supertab'
+Plugin 'sirver/ultisnips'
+Plugin 'honza/vim-snippets'
+Plugin 'scrooloose/nerdcommenter'
+Plugin 'Townk/vim-autoclose'
+### Syntax
 Plugin 'vim-scripts/Logcat-syntax-highlighter'
-Plugin 'godlygeek/tabular'
 Plugin 'plasticboy/vim-markdown'
+Plugin 'vhda/verilog_systemverilog.vim'
+Plugin 'octol/vim-cpp-enhanced-highlight'
+### Syntastic
+Plugin 'scrooloose/syntastic'
+Plugin 'w0rp/ale'
+### Formatting
 Plugin 'Chiel92/vim-autoformat'
 Plugin 'rhysd/vim-clang-format'
+Plugin 'godlygeek/tabular'
+### Searching
+Plugin 'mileszs/ack.vim'
+Plugin 'rking/ag.vim'
+Plugin 'wsdjeg/FlyGrep.vim'
 Plugin 'easymotion/vim-easymotion'
 
 ### cscope
@@ -211,11 +272,6 @@ cscope -b -q -k
 
 
 #### FAQ:
-- how to install cscope before usage
-```bash
-sudo apt-get install cscope
-```
-
 - how to create cscope.out file
 ```bash
 cscope -Rbq
@@ -225,6 +281,15 @@ cscope -Rbq
 :copen
 ```
 ### YouCompleteMe
+
+#### User Guide
+- C-family Semantic Completion
+There are 2 methods which can be used to provide compile flags to clang:
+1. Option 1: Use a compilation database
+> If no .ycm_extra_conf.py is found, YouCompleteMe automatically tries to load a compilation database if there is one.
+
+
+2. Option 2: Provide the flags manually
 
 > For a more elaborate example, see ycmd's own[ .ycm_extra_conf.py](https://raw.githubusercontent.com/Valloric/ycmd/66030cd94299114ae316796f3cad181cac8a007c/.ycm_extra_conf.py). You should be able to use it as a starting point
 
@@ -253,6 +318,16 @@ I[16:14:11.826] Updating file /home/zongmincui/work/baremetal-test/ctest/modules
 I[16:14:11.837] Dropped diagnostic outside main file: : too many errors emitted, stopping now
 ```
 
+- `g:ycm_semantic_triggers`
+默认输入情况下，是符号补全，YCM 的语义补全一直使用被动触发（输入 ->或 . 或 ::，或者按 CTRL+SPACE/Z）
+```vim
+" trigger semantic complete when type
+let g:ycm_semantic_triggers =  {
+                        \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+                        \ 'cs,lua,javascript': ['re!\w{2}'],
+                        \ }
+```
+这里我们追加了一个正则表达式，代表相关语言的源文件中，用户只需要输入符号的两个字母，即可自动弹出语义补全：
 
 #### FAQ:
 - prompt header file not found when open source file
@@ -270,6 +345,7 @@ the [bear](https://github.com/rizsotto/Bear) utility takes the approach of inter
 
 refs
 : [Navigating the Linux Kernel source tree with YouCompleteMe](https://www.scalyr.com/blog/searching-1tb-sec-systems-engineering-before-algorithms/)
+[YouCompleteMe 中容易忽略的配置](https://zhuanlan.zhihu.com/p/33046090)
 
 ### syntastic
 #### FAQ:
@@ -317,9 +393,10 @@ let g:clang_format#style_options = {
     \}
 ```
 PointerAlignment: Right is unfortunately not implemented yet.(see refs)
+
 refs
 : [CLANG-FORMAT STYLE OPTIONS](https://clang.llvm.org/docs/ClangFormatStyleOptions.html)
-  [clang-format: Align asterisk (\*) of pointer declaration with variable name Ask](https://stackoverflow.com/questions/38392889/clang-format-align-asterisk-of-pointer-declaration-with-variable-name)
+[clang-format: Align asterisk (\*) of pointer declaration with variable name Ask](https://stackoverflow.com/questions/38392889/clang-format-align-asterisk-of-pointer-declaration-with-variable-name)
 
 #### FAQ
 - Can clang-format align a block of #defines for me?
@@ -351,4 +428,33 @@ refs
 ```vim
 <leader><leader>h
 <leader><leader>l
+```
+
+### ack.vim
+#### configuration
+```vim
+""""""""""""""""""""""""""""""
+" Vundle:ack
+""""""""""""""""""""""""""""""
+let g:ackhighlight=1
+"let g:ack_autofold_results=1
+```
+
+### ag.vim
+#### configuration
+```vim
+""""""""""""""""""""""""""""""
+" Vundle:ag
+""""""""""""""""""""""""""""""
+let g:ag_highlight=1
+nnoremap <silent><F3> :Ag!<CR>
+```
+
+### FlayGrep.vim
+#### configuration
+```vim
+""""""""""""""""""""""""""""""
+" Vundle: FlyGrep.vim
+""""""""""""""""""""""""""""""
+nnoremap <C-F> :FlyGrep<CR>
 ```
