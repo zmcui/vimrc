@@ -22,7 +22,7 @@
 " => Paired character
 " => Timestamp
 " => logcat
-" => Plugins
+" => Plugs
 "
 " Description:
 " This is the personal .vimrc file of zongmin.cui
@@ -73,54 +73,51 @@ set path+=**
 nmap <leader>* :vimgrep /<C-R><C-W>/j %<CR>:copen<CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Vundle 
+" => Plug
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-filetype off                  " required!
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
 
-" set the runtime path to include Vundle and initialize
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
-" alternatively, pass a path where Vundle should install plugins
-"call vundle#begin('~/some/path/here')
+" Specify a directory for plugins
+" - For Neovim: ~/.local/share/nvim/plugged
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.vim/plugged')
+Plug 'altercation/vim-colors-solarized'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'majutsushi/tagbar'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'vim-scripts/a.vim'
+Plug 'tpope/vim-fugitive'
+Plug 'vim-scripts/doxygentoolkit.vim'
 
-" let Vundle manage Vundle, required
-Plugin 'VundleVim/Vundle.vim'
-" original repos on github
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'scrooloose/nerdtree'
-Plugin 'majutsushi/tagbar'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'vim-scripts/a.vim'
-Plugin 'tpope/vim-fugitive'
-Plugin 'vim-scripts/doxygentoolkit.vim'
+" Plug 'Shougo/echodoc.vim'
+Plug 'valloric/youcompleteme'
+" Plug 'rdnetto/ycm-generator'
+" Plug 'rip-rip/clang_complete'
+Plug 'ervandew/supertab'
+Plug 'sirver/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'scrooloose/nerdcommenter'
+Plug 'townk/vim-autoclose'
 
-" Plugin 'Shougo/echodoc.vim'
-Plugin 'valloric/youcompleteme'
-" Plugin 'rdnetto/ycm-generator'
-" Plugin 'rip-rip/clang_complete'
-Plugin 'ervandew/supertab'
-Plugin 'sirver/ultisnips'
-Plugin 'honza/vim-snippets'
-Plugin 'scrooloose/nerdcommenter'
-Plugin 'townk/vim-autoclose'
+Plug 'vhda/verilog_systemverilog.vim'
+Plug 'octol/vim-cpp-enhanced-highlight'
 
-Plugin 'vhda/verilog_systemverilog.vim'
-Plugin 'octol/vim-cpp-enhanced-highlight'
+" Plug 'w0rp/ale'
 
-" Plugin 'w0rp/ale'
+Plug 'chiel92/vim-autoformat'
+Plug 'rhysd/vim-clang-format'
+Plug 'godlygeek/tabular'
 
-Plugin 'chiel92/vim-autoformat'
-Plugin 'rhysd/vim-clang-format'
-Plugin 'godlygeek/tabular'
-
-Plugin 'wsdjeg/FlyGrep.vim'
-Plugin 'easymotion/vim-easymotion'
-
-
-call vundle#end()            " required
-filetype plugin indent on    " required
+Plug 'wsdjeg/FlyGrep.vim'
+Plug 'easymotion/vim-easymotion'
+" Initialize plugin system
+call plug#end()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
@@ -389,6 +386,8 @@ let g:ycm_filetype_whitelist = {
 			\ "objc":1,
 			\ "sh":1,
 			\ "zsh":1,
+			\ "markdown":1,
+			\ "vim":1,
 			\ }
 
 """"""""""""""""""""""""""""""

@@ -236,6 +236,11 @@ Plugin 'rking/ag.vim'
 Plugin 'wsdjeg/FlyGrep.vim'
 Plugin 'easymotion/vim-easymotion'
 
+### Vundle
+
+### vim-plug
+异步插件管理器 A minimalist Vim plugin manager.
+
 ### cscope
 #### config
 - bindings
@@ -346,6 +351,14 @@ the [bear](https://github.com/rizsotto/Bear) utility takes the approach of inter
 refs
 : [Navigating the Linux Kernel source tree with YouCompleteMe](https://www.scalyr.com/blog/searching-1tb-sec-systems-engineering-before-algorithms/)
 [YouCompleteMe 中容易忽略的配置](https://zhuanlan.zhihu.com/p/33046090)
+
+- Failed to connect to go.googlesource.com
+```bash
+# 配置git全局代理
+git config --global http.proxy "localhost:1080"
+# 删除git全局代理
+git config --global --unset http.proxy
+```
 
 ### syntastic
 #### FAQ:
