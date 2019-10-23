@@ -3,6 +3,7 @@ Rev|Date|Author|Description
 ---|----------|----------|---------------
 A  |2015.01.13|zongmincui|start up
 B  |2019.07.31|zongmincui|vim8 update
+B  |2019.08.03|zongmincui|replace vundle with plug
 
 https://github.com/zmcui/vimrc
 
@@ -11,6 +12,8 @@ https://github.com/zmcui/vimrc
 
 # Installation
 ## VIM 8.0
+### PPA(Deprecated)
+> 很有可能跟新的版本某些feature没开，比如python, 导致youcomplteme插件的clangd功能把内存耗光，非常严重
 ```bash
 # run command to add the PPA
 sudo add-apt-repository ppa:jonathonf/vim
@@ -19,8 +22,51 @@ sudo apt install vim
 # To uninstall Vim 8.0 and downgrade it to the stock version in Ubuntu repository
 sudo apt install ppa-purge && sudo ppa-purge ppa:jonathonf/vim
 ```
+
+```bash
+sudo add-apt-repository --remove ppa:jonathonf/vim
+```
 ref
 : [Vim 8.0 Released! How to install it in Ubuntu 16.04](http://tipsonubuntu.com/2016/09/13/vim-8-0-released-install-ubuntu-16-04)
+
+### SRC
+默认安装的 Vim是支持python的，所以安装最新版本有点折腾
+The actual location of the directory is controlled by --prefix
+```bash
+git clone https://github.com/vim/vim.git
+cd vim
+
+./configure --with-features=huge \
+    --enable-multibyte \
+    --enable-rubyinterp=yes \
+    --enable-python3interp=yes \
+    --enable-perlinterp=yes \
+    --prefix=/usr/local # 安装目录在/usr/local/bin/vim
+
+make VIMRUNTIMEDIR=/usr/local/share/vim/vim81
+
+sudo make install
+```
+
+卸载
+```bash
+make VIMRUNTIMEDIR=/usr/local/share/vim/vim81
+sudo make uninstall
+```
+
+Set vim as your default editor with update-alternatives.
+```bash
+sudo update-alternatives --install /usr/bin/editor editor /usr/local/bin/vim 1
+sudo update-alternatives --set editor /usr/local/bin/vim
+sudo update-alternatives --install /usr/bin/vi vi /usr/local/bin/vim 1
+sudo update-alternatives --set vi /usr/local/bin/vim
+```
+
+
+refs:
+[Building Vim from source](https://github.com/ycm-core/YouCompleteMe/wiki/Building-Vim-from-source)
+[Vim 8 支持 Python 3 的一些坑](https://www.jishuwen.com/d/2KE0)
+[Uninstalling Vim compiled from source](https://superuser.com/questions/623040/uninstalling-vim-compiled-from-source)
 
 # basic Usage
 ## format
@@ -194,47 +240,84 @@ refs
 : [GNU Global](https://www.gnu.org/software/global/)
 [GNU GLOBAL, THE PROGRAMMER’S FRIEND](https://linux.byexamples.com/archives/538/gnu-global-the-programmers-friend)
 
+### Startup Time Cost
+启动时把计时信息写入文件，用于分析载入 .vimrc、插件和打开首个文件的过程中时哪一步最耗时
+```bash
+vim --startuptime vim.log -c q
+
+# times in msec
+#  clock   self+sourced   self:  sourced script
+#  clock   elapsed:              other lines
+# 
+# 000.006  000.006: --- VIM STARTING ---
+# 000.101  000.095: Allocated generic buffers
+# 000.182  000.081: locale set
+# 000.200  000.018: GUI prepared
+# 000.202  000.002: clipboard setup
+# 000.206  000.004: window checked
+# 000.835  000.629: inits 1
+# 000.865  000.030: parsing arguments
+# ...
+# 038.610  000.020: inits 3
+# 039.208  000.598: reading viminfo
+# 2082.814  2043.606: setup clipboard
+# 2082.862  000.048: setting raw mode
+# ...
+```
+
+> Do not try connecting to the X server to get the current window title and copy/paste using the X clipboard.  This avoids a long startup time when running Vim in a terminal emulator and the connection to the X server is slow.
+refs
+: [vim takes a very long time to start up](https://stackoverflow.com/questions/14635295/vim-takes-a-very-long-time-to-start-up)
+
 ## Plugins
 [VimAwesome](https://vimawesome.com/)
 ### Plugin Manager
-Plugin 'VundleVim/Vundle.vim'
-Plugin 'junegunn/vim-plug'
+Plug 'VundleVim/Vundle.vim'
+Plug 'junegunn/vim-plug'
+
 ### Interface
-Plugin 'altercation/vim-colors-solarized'
-Plugin 'vim-airline/vim-airline'
-Plugin 'vim-airline/vim-airline-themes'
-Plugin 'scrooloose/nerdtree'
-Plugin 'majutsushi/tagbar'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'vim-scripts/a.vim'
-Plugin 'tpope/vim-fugitive'
-Plugin 'vim-scripts/doxygentoolkit.vim'
+Plug 'altercation/vim-colors-solarized'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'scrooloose/nerdtree'
+Plug 'majutsushi/tagbar'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'vim-scripts/a.vim'
+Plug 'tpope/vim-fugitive'
+Plug 'vim-scripts/doxygentoolkit.vim'
+Plug 'Yggdroot/indentLine'
+
 ### IntelliSense 
-Plugin 'Valloric/YouCompleteMe'
-Plugin 'rdnetto/ycm-generator'
-Plugin 'rip-rip/clang_complete'
-Plugin 'ervandew/supertab'
-Plugin 'sirver/ultisnips'
-Plugin 'honza/vim-snippets'
-Plugin 'scrooloose/nerdcommenter'
-Plugin 'Townk/vim-autoclose'
+Plug 'Valloric/YouCompleteMe'
+Plug 'rdnetto/ycm-generator'
+Plug 'rip-rip/clang_complete'
+Plug 'ervandew/supertab'
+Plug 'sirver/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'scrooloose/nerdcommenter'
+Plug 'Townk/vim-autoclose'
+
 ### Syntax
-Plugin 'vim-scripts/Logcat-syntax-highlighter'
-Plugin 'plasticboy/vim-markdown'
-Plugin 'vhda/verilog_systemverilog.vim'
-Plugin 'octol/vim-cpp-enhanced-highlight'
+Plug 'vim-scripts/Logcat-syntax-highlighter'
+Plug 'plasticboy/vim-markdown'
+Plug 'vhda/verilog_systemverilog.vim'
+Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'sheerun/vim-polyglot'
+
 ### Syntastic
-Plugin 'scrooloose/syntastic'
-Plugin 'w0rp/ale'
+Plug 'scrooloose/syntastic'
+Plug 'w0rp/ale'
+
 ### Formatting
-Plugin 'Chiel92/vim-autoformat'
-Plugin 'rhysd/vim-clang-format'
-Plugin 'godlygeek/tabular'
+Plug 'Chiel92/vim-autoformat'
+Plug 'rhysd/vim-clang-format'
+Plug 'godlygeek/tabular'
+
 ### Searching
-Plugin 'mileszs/ack.vim'
-Plugin 'rking/ag.vim'
-Plugin 'wsdjeg/FlyGrep.vim'
-Plugin 'easymotion/vim-easymotion'
+Plug 'mileszs/ack.vim'
+Plug 'rking/ag.vim'
+Plug 'wsdjeg/FlyGrep.vim'
+Plug 'easymotion/vim-easymotion'
 
 ### Vundle
 

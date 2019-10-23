@@ -64,6 +64,7 @@ set tags=./tags,tags;$HOME
 
 " using clipboard as the default register
 set clipboard=unnamedplus
+" set clipboard=exclude:.* " never connect to the X server
 
 " search down into subfolders
 " Provides tab-completion for all file-related tasks
@@ -92,8 +93,12 @@ Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'majutsushi/tagbar'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'vim-scripts/a.vim'
-Plug 'tpope/vim-fugitive'
 Plug 'vim-scripts/doxygentoolkit.vim'
+Plug 'Yggdroot/indentLine'
+
+" Git helper
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
 
 " Plug 'Shougo/echodoc.vim'
 Plug 'valloric/youcompleteme'
@@ -103,10 +108,11 @@ Plug 'ervandew/supertab'
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'scrooloose/nerdcommenter'
-Plug 'townk/vim-autoclose'
+" Plug 'townk/vim-autoclose'
+Plug 'Raimondi/delimitMate'
 
-Plug 'vhda/verilog_systemverilog.vim'
-Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'sheerun/vim-polyglot'
+Plug 'habamax/vim-skipit'
 
 " Plug 'w0rp/ale'
 
@@ -116,6 +122,7 @@ Plug 'godlygeek/tabular'
 
 Plug 'wsdjeg/FlyGrep.vim'
 Plug 'easymotion/vim-easymotion'
+" Plug 'ludovicchabant/vim-gutentags'
 " Initialize plugin system
 call plug#end()
 
@@ -170,12 +177,12 @@ set noswapfile
 " => Text, tab and indent related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use spaces instead of tabs
-"set expandtab
+" set expandtab
 " Be smart when using tabs
 set smarttab
 " 1 tab == 2 spaces
-"set shiftwidth=2
-"set tabstop=2
+" set shiftwidth=2
+" set tabstop=2
 "Auto indent
 set ai
 "Smart indent
@@ -353,19 +360,30 @@ let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standar
 let g:ctrlp_match_window = 'top'
 
 """"""""""""""""""""""""""""""
+" Vundle:indentLine
+""""""""""""""""""""""""""""""
+"打开缩进线
+let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+let g:indentLine_color_term = 238
+" let g:indentLine_concealcursor = 'inc'
+let g:indentLine_conceallevel = 1
+
+""""""""""""""""""""""""""""""
 " Vundle:YouCompleteMe
 """"""""""""""""""""""""""""""
+let g:ycm_use_clangd = 1 	"libclang/clangd
+
 set completeopt=menu,menuone "no completion in the preview window
 let g:ycm_add_preview_to_completeopt = 0 "no add preview
-let g:ycm_use_clangd = 1 	"libclang/clangd
 " set splitbelow
 let g:ycm_global_ycm_extra_conf='/home/zongmincui/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
 let g:ycm_confirm_extra_conf = 0
 let g:ycm_collect_identifiers_from_tags_files = 0
 let g:ycm_collect_identifiers_from_comments_and_strings = 1
 let g:ycm_seed_identifiers_with_syntax = 1
-let g:ycm_show_diagnostics_ui = 0
-let g:ycm_enable_diagnostic_signs = 0 
+let g:ycm_show_diagnostics_ui = 1
+" let g:ycm_enable_diagnostic_signs = 0
+" let g:ycm_enable_diagnostic_highlighting = 0
 let g:ycm_autoclose_preview_window_after_insertion = 1
 let g:ycm_autoclose_preview_window_after_completion = 1
 " make YCM compatible with UltiSnips (using supertab)
@@ -388,7 +406,12 @@ let g:ycm_filetype_whitelist = {
 			\ "zsh":1,
 			\ "markdown":1,
 			\ "vim":1,
+			\ "CMakeLists.txt":1,
 			\ }
+" Let clangd fully control code completion
+" let g:ycm_clangd_uses_ycmd_caching = 0
+" Use installed clangd, not YCM-bundled clangd which doesn't get updates.
+" let g:ycm_clangd_binary_path = exepath("clangd")
 
 """"""""""""""""""""""""""""""
 " Vundle:ultisnips
@@ -437,45 +460,36 @@ nmap <leader>sd :cs find d <C-R>=expand("<cword>")<cr><cr>:copen<cr>
 nmap <leader>so :copen<cr>
 
 """"""""""""""""""""""""""""""
-" Vundle:syntastic
-""""""""""""""""""""""""""""""
-" set statusline+=%#warningmsg#
-" set statusline+=%{SyntasticStatuslineFlag()}
-" set statusline+=%*
-" 
-" let g:syntastic_always_populate_loc_list = 1
-" let g:syntastic_auto_loc_list = 1
-" "let g:syntastic_check_on_open = 1
-" let g:syntastic_check_on_wq = 0
-" let g:syntastic_c_check_header = 0
-" let g:syntastic_cpp_check_header = 0
-" let g:syntastic_c_config_file = '.systastic_c_config'
-" let g:syntastic_cpp_config_file = '.systastic_cpp_config'
-"
-""""""""""""""""""""""""""""""
 " Vundle:ale
 """"""""""""""""""""""""""""""
-let g:ale_linters_explicit = 1
-let g:ale_completion_delay = 500
-let g:ale_echo_delay = 20
-let g:ale_lint_delay = 500
-let g:ale_echo_msg_format = '[%linter%] %code: %%s'
-let g:ale_lint_on_text_changed = 'normal'
-let g:ale_lint_on_insert_leave = 1
-let g:airline#extensions#ale#enabled = 1
+" let g:ale_linters_explicit = 1
+" let g:ale_completion_delay = 500
+" let g:ale_echo_delay = 20
+" let g:ale_lint_delay = 500
+" let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+" let g:ale_lint_on_text_changed = 'normal'
+" let g:ale_lint_on_insert_leave = 1
+" let g:airline#extensions#ale#enabled = 1
+"
+" let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
+" let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
+" let g:ale_c_cppcheck_options = ''
+" let g:ale_cpp_cppcheck_options = ''
+"
+" let g:ale_sign_error = "\ue009\ue009"
+" hi! clear SpellBad
+" hi! clear SpellCap
+" hi! clear SpellRare
+" hi! SpellBad gui=undercurl guisp=red
+" hi! SpellCap gui=undercurl guisp=blue
+" hi! SpellRare gui=undercurl guisp=magenta
+"
+" let g:ale_linters = {
+" \   'c++': ['cppcheck'],
+" \   'c': ['cppcheck'],
+" \   'python': ['pylint'],
+" \}
 
-let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
-let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++14'
-let g:ale_c_cppcheck_options = ''
-let g:ale_cpp_cppcheck_options = ''
-
-let g:ale_sign_error = "\ue009\ue009"
-hi! clear SpellBad
-hi! clear SpellCap
-hi! clear SpellRare
-hi! SpellBad gui=undercurl guisp=red
-hi! SpellCap gui=undercurl guisp=blue
-hi! SpellRare gui=undercurl guisp=magenta
 """"""""""""""""""""""""""""""
 " Vundle:nerdcommenter
 """"""""""""""""""""""""""""""
@@ -534,6 +548,56 @@ let g:clang_format#style_options = {
     \ 'PointerAlignment' : 'Right',
     \}
 
+""""""""""""""""""""""""""""""
+" Plug: 'habamax/vim-skipit'
+""""""""""""""""""""""""""""""
+let g:skipit_default_mappings = 1
+
+""""""""""""""""""""""""""""""
+" Plug: 'airblade/vim-gitgutter'
+""""""""""""""""""""""""""""""
+" let g:gitgutter_diff_args='--cached'
+
+""""""""""""""""""""""""""""""
+" Vundle: vim-gutentags
+" Vundle: gutentags_plus'
+""""""""""""""""""""""""""""""
+"" gutentags 搜索工程目录的标志，当前文件路径向上递归直到碰到这些文件/目录名
+"let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+"
+"" 所生成的数据文件的名称
+"let g:gutentags_ctags_tagfile = '.tags'
+"
+"" 同时开启 ctags 和 gtags 支持：
+"let g:gutentags_modules = []
+"if executable('ctags')
+"	let g:gutentags_modules += ['ctags']
+"endif
+"if executable('gtags-cscope') && executable('gtags')
+"	let g:gutentags_modules += ['gtags_cscope']
+"endif
+"
+"" 将自动生成的 ctags/gtags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+"let s:vim_tags = expand('~/.cache/tags')
+"let g:gutentags_cache_dir = s:vim_tags
+"
+"" 配置 ctags 的参数
+"let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+"let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+"let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
+"
+"" 如果使用 universal ctags 需要增加下面一行
+"" let g:gutentags_ctags_extra_args += ['--output-format=e-ctags']
+"
+"" 禁用 gutentags 自动加载 gtags 数据库的行为
+"" let g:gutentags_auto_add_gtags_cscope = 0
+"
+"" 检测 ~/.cache/tags 不存在就新建
+"if !isdirectory(s:vim_tags)
+"   silent! call mkdir(s:vim_tags, 'p')
+"endif
+
+
 " 256-color putty
 if &term =~ "xterm"
   " 256 colors
@@ -549,8 +613,6 @@ if &term =~ "xterm"
     let &t_Sb = "\<Esc>[4%dm"
   endif
 endif
-
-hi CursorLine ctermbg=DarkGray
 
 "
 " Causes all comment folds to be opened and closed using z[ and z]
