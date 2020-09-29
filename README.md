@@ -3,7 +3,8 @@ Rev|Date|Author|Description
 ---|----------|----------|---------------
 A  |2015.01.13|zongmincui|start up
 B  |2019.07.31|zongmincui|vim8 update
-B  |2019.08.03|zongmincui|replace vundle with plug
+C  |2019.08.03|zongmincui|replace vundle with plug
+D  |2020.09.29|zongmincui|fzf
 
 https://github.com/zmcui/vimrc
 
@@ -14,7 +15,7 @@ https://github.com/zmcui/vimrc
 ## VIM 8.0
 ### PPA(Deprecated)
 > 很有可能跟新的版本某些feature没开，比如python, 导致youcomplteme插件的clangd功能把内存耗光，非常严重
-```bash
+```bash?linenums=false
 # run command to add the PPA
 sudo add-apt-repository ppa:jonathonf/vim
 sudo apt update
@@ -23,7 +24,8 @@ sudo apt install vim
 sudo apt install ppa-purge && sudo ppa-purge ppa:jonathonf/vim
 ```
 
-```bash
+删除ppa
+```bash?linenums=false
 sudo add-apt-repository --remove ppa:jonathonf/vim
 ```
 ref
@@ -32,16 +34,21 @@ ref
 ### SRC
 默认安装的 Vim是支持python的，所以安装最新版本有点折腾
 The actual location of the directory is controlled by --prefix
-```bash
+```bash?linenums=false
 git clone https://github.com/vim/vim.git
 cd vim
 
 ./configure --with-features=huge \
-    --enable-multibyte \
-    --enable-rubyinterp=yes \
-    --enable-python3interp=yes \
-    --enable-perlinterp=yes \
-    --prefix=/usr/local # 安装目录在/usr/local/bin/vim
+            --enable-multibyte \
+            --enable-rubyinterp=yes \
+            --enable-python3interp=yes \
+            --with-python3-config-dir=$(python3-config --configdir) \
+            --enable-perlinterp=yes \
+            --enable-luainterp=yes \
+            --enable-gui=gtk2 \
+            --enable-cscope \
+            --prefix=/usr/local
+# 安装目录在/usr/local/bin/vim
 
 make VIMRUNTIMEDIR=/usr/local/share/vim/vim81
 
@@ -49,13 +56,13 @@ sudo make install
 ```
 
 卸载
-```bash
+```bash?linenums=false
 make VIMRUNTIMEDIR=/usr/local/share/vim/vim81
 sudo make uninstall
 ```
 
 Set vim as your default editor with update-alternatives.
-```bash
+```bash?linenums=false
 sudo update-alternatives --install /usr/bin/editor editor /usr/local/bin/vim 1
 sudo update-alternatives --set editor /usr/local/bin/vim
 sudo update-alternatives --install /usr/bin/vi vi /usr/local/bin/vim 1
@@ -204,7 +211,7 @@ refs
 
 ### Soure Code Tagging System
 #### Ctags
-```bash
+```bash?linenums=false
 # generate tags under current dir
 ctags -R *
 ```
@@ -215,11 +222,11 @@ refs
 : [VIM WITH CTAGS](https://linux.byexamples.com/archives/177/vim-with-ctags/)
 
 #### cscope
+1. install
 Cscope is a very powerful interface allowing you to easily navigate C-like code files.
-```bash
+```bash?linenums=false
 sudo apt install cscope
 ```
-
 `s`   symbol: find all references to the token under cursor
 `g`   global: find global definition(s) of the token under cursor
 `c`   calls:  find all calls to the function name under cursor
@@ -228,21 +235,63 @@ sudo apt install cscope
 `f`   file:   open the filename under cursor
 `i`   includes: find files that include the filename under cursor
 `d`   called: find functions that function under cursor calls
+refs
+: [linux kernel indexing](https://stackoverflow.com/questions/33676829/vim-configuration-for-linux-kernel-development)
+
+2. config
+- bindings
+```vim
+" cscope bindings
+nmap <leader>ss :cs find s <C-R>=expand("<cword>")<cr><cr>
+nmap <leader>sg :cs find g <C-R>=expand("<cword>")<cr><cr>
+nmap <leader>sc :cs find c <C-R>=expand("<cword>")<cr><cr>
+nmap <leader>st :cs find t <C-R>=expand("<cword>")<cr><cr>
+nmap <leader>se :cs find e <C-R>=expand("<cword>")<cr><cr>
+nmap <leader>sf :cs find f <C-R>=expand("<cfile>")<cr><cr>
+nmap <leader>si :cs find i <C-R>=expand("<cfile>")<cr><cr>
+nmap <leader>sd :cs find d <C-R>=expand("<cword>")<cr><cr>
+```
+
+- database
+generate cscope.file
+```bash?linenums=false
+LNX=/home/zongmincui/work/asr_7p1_evb/kernel/linux
+cd /
+find $LNX                                                                \
+    -path "$LNX/arch/*" ! -path "$LNX/arch/arm64*" -prune -o              \
+    -path "$LNX/Documentation*" -prune -o                                 \
+    -path "$LNX/scripts*" -prune -o                                       \
+    -path "$LNX/drivers/media/platform/aquila-isp*" -prune -o             \
+    -name "*.[chxsS]" -print > "$LNX/cscope.files"
+```
+generate cscope database
+```bash?linenums=false
+cscope -b -q -k
+```
+[Using Cscope on large projects](http://cscope.sourceforge.net/large_projects.html)
+
+3. FAQ:
+- how to create cscope.out file
+```bash?linenums=false
+cscope -Rbq
+```
+- open result quickfix window with :copen everytime
+```vim
+:copen
+```
 
 #### Gtags
-
-```bash
+```bash?linenums=false
 # generate the GTAGS, GRTAGS, and GPATH files
 gtags
 ```
-
 refs
 : [GNU Global](https://www.gnu.org/software/global/)
 [GNU GLOBAL, THE PROGRAMMER’S FRIEND](https://linux.byexamples.com/archives/538/gnu-global-the-programmers-friend)
 
 ### Startup Time Cost
 启动时把计时信息写入文件，用于分析载入 .vimrc、插件和打开首个文件的过程中时哪一步最耗时
-```bash
+```bash?linenums=false
 vim --startuptime vim.log -c q
 
 # times in msec
@@ -272,121 +321,51 @@ refs
 ## Plugins
 [VimAwesome](https://vimawesome.com/)
 ### Plugin Manager
-Plug 'VundleVim/Vundle.vim'
-Plug 'junegunn/vim-plug'
+#### VundleVim/Vundle.vim
 
-### Interface
-Plug 'altercation/vim-colors-solarized'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'scrooloose/nerdtree'
-Plug 'majutsushi/tagbar'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'vim-scripts/a.vim'
-Plug 'tpope/vim-fugitive'
-Plug 'vim-scripts/doxygentoolkit.vim'
-Plug 'Yggdroot/indentLine'
-
-### IntelliSense 
-Plug 'Valloric/YouCompleteMe'
-Plug 'rdnetto/ycm-generator'
-Plug 'rip-rip/clang_complete'
-Plug 'ervandew/supertab'
-Plug 'sirver/ultisnips'
-Plug 'honza/vim-snippets'
-Plug 'scrooloose/nerdcommenter'
-Plug 'Townk/vim-autoclose'
-
-### Syntax
-Plug 'vim-scripts/Logcat-syntax-highlighter'
-Plug 'plasticboy/vim-markdown'
-Plug 'vhda/verilog_systemverilog.vim'
-Plug 'octol/vim-cpp-enhanced-highlight'
-Plug 'sheerun/vim-polyglot'
-
-### Syntastic
-Plug 'scrooloose/syntastic'
-Plug 'w0rp/ale'
-
-### Formatting
-Plug 'Chiel92/vim-autoformat'
-Plug 'rhysd/vim-clang-format'
-Plug 'godlygeek/tabular'
-
-### Searching
-Plug 'mileszs/ack.vim'
-Plug 'rking/ag.vim'
-Plug 'wsdjeg/FlyGrep.vim'
-Plug 'easymotion/vim-easymotion'
-
-### Vundle
-
-### vim-plug
+#### junegunn/vim-plug
 异步插件管理器 A minimalist Vim plugin manager.
 
-### cscope
-#### config
-- bindings
+### Interface
+#### altercation/vim-colors-solarized
+#### vim-airline/vim-airline
+#### vim-airline/vim-airline-themes
+#### scrooloose/nerdtree
+#### majutsushi/tagbar
+#### vim-scripts/a.vim
+#### tpope/vim-fugitive
+Diff between current file and the index
 ```vim
-" cscope bindings
-nmap <leader>ss :cs find s <C-R>=expand("<cword>")<cr><cr>
-nmap <leader>sg :cs find g <C-R>=expand("<cword>")<cr><cr>
-nmap <leader>sc :cs find c <C-R>=expand("<cword>")<cr><cr>
-nmap <leader>st :cs find t <C-R>=expand("<cword>")<cr><cr>
-nmap <leader>se :cs find e <C-R>=expand("<cword>")<cr><cr>
-nmap <leader>sf :cs find f <C-R>=expand("<cfile>")<cr><cr>
-nmap <leader>si :cs find i <C-R>=expand("<cfile>")<cr><cr>
-nmap <leader>sd :cs find d <C-R>=expand("<cword>")<cr><cr>
+:Gdiff :0
 ```
-
-- database
-generate cscope.file
-```bash
-LNX=/home/zongmincui/work/asr_7p1_evb/kernel/linux
-cd /
-find $LNX                                                                \
-    -path "$LNX/arch/*" ! -path "$LNX/arch/arm64*" -prune -o              \
-    -path "$LNX/Documentation*" -prune -o                                 \
-    -path "$LNX/scripts*" -prune -o                                       \
-    -path "$LNX/drivers/media/platform/aquila-isp*" -prune -o             \
-    -name "*.[chxsS]" -print > "$LNX/cscope.files"
-```
-generate cscope database
-```bash
-cscope -b -q -k
-```
-
-[Using Cscope on large projects](http://cscope.sourceforge.net/large_projects.html)
-
-
-#### FAQ:
-- how to create cscope.out file
-```bash
-cscope -Rbq
-```
-- open result quickfix window with :copen everytime
+Diff between current file and some other [revision]
 ```vim
-:copen
+:Gdiff [revision]
 ```
-### YouCompleteMe
+Diff between current file and current file 3 commits ago:
+```vim
+:Gdiff ~3
+```
+#### vim-scripts/doxygentoolkit.vim
+#### Yggdroot/indentLine
 
-#### User Guide
+### IntelliSense 
+#### Valloric/YouCompleteMe
+1. User Guide
 - C-family Semantic Completion
 There are 2 methods which can be used to provide compile flags to clang:
-1. Option 1: Use a compilation database
+Option 1: Use a compilation database
 > If no .ycm_extra_conf.py is found, YouCompleteMe automatically tries to load a compilation database if there is one.
 
-
-2. Option 2: Provide the flags manually
-
+Option 2: Provide the flags manually
 > For a more elaborate example, see ycmd's own[ .ycm_extra_conf.py](https://raw.githubusercontent.com/Valloric/ycmd/66030cd94299114ae316796f3cad181cac8a007c/.ycm_extra_conf.py). You should be able to use it as a starting point
 
-#### config
+2. config
 - `g:ycm_confirm_extra_conf`
  disable prompt if '.ycm_extra_conf.py' is safe to be loaded everytime
  
 - g:ycm_use_clangd
-```bash
+```bash?linenums=false
 # install YCM with both libclang and clangd enabled
 cd ~/.vim/bundle/YouCompleteMe
 ./install.py --clang-completer
@@ -417,7 +396,7 @@ let g:ycm_semantic_triggers =  {
 ```
 这里我们追加了一个正则表达式，代表相关语言的源文件中，用户只需要输入符号的两个字母，即可自动弹出语义补全：
 
-#### FAQ:
+3. FAQ:
 - prompt header file not found when open source file
 删除.ycm_extra_conf.py配置里的`'-I’, '.'`
 
@@ -436,33 +415,64 @@ refs
 [YouCompleteMe 中容易忽略的配置](https://zhuanlan.zhihu.com/p/33046090)
 
 - Failed to connect to go.googlesource.com
-```bash
+```bash?linenums=false
 # 配置git全局代理
 git config --global http.proxy "localhost:1080"
 # 删除git全局代理
 git config --global --unset http.proxy
 ```
+refs
+: [Git设置代理拉取](https://my.oschina.net/dingdayu/blog/1509885)
 
-### syntastic
-#### FAQ:
+- fails to clone git://github.com/mitsuhiko/flask-sphinx-themes.git
+```bash?linenums=false
+# You can force all git: to use https with some .gitconfig magic:
+git config --global url."https://".insteadOf git://
+```
+refs
+: [Update the ycmd submodule to the latest commit](https://github.com/ycm-core/YouCompleteMe/pull/3646)
+
+#### rdnetto/ycm-generator
+
+#### rip-rip/clang_complete
+
+#### ervandew/supertab
+
+#### sirver/ultisnips
+
+#### honza/vim-snippets
+
+#### scrooloose/nerdcommenter
+
+#### Townk/vim-autoclose
+
+#### habamax/vim-skipit
+Skip text in INSERT mode.
+
+If you have g:skipit_default_mappings set to 1 then while INSERT mode on press \<CTRL-L\> l to skip everything until parentheses, bars or quotes and place cursor right after them.
+
+### Syntax
+#### vim-scripts/Logcat-syntax-highlighter
+
+#### plasticboy/vim-markdown
+
+#### vhda/verilog_systemverilog.vim
+
+#### octol/vim-cpp-enhanced-highlight
+
+#### sheerun/vim-polyglot
+
+### Syntastic
+#### scrooloose/syntastic
+##### FAQ:
 - Including header files recursively for syntastic
 [how to](http://stackoverflow.com/questions/16622992/including-header-files-recursively-for-syntastic)
 
-### vim-fugitive
-Diff between current file and the index
-```vim
-:Gdiff :0
-```
-Diff between current file and some other [revision]
-```vim
-:Gdiff [revision]
-```
-Diff between current file and current file 3 commits ago:
-```vim
-:Gdiff ~3
-```
+#### w0rp/ale
 
-### vim-clang-format
+### Formatting
+#### Chiel92/vim-autoformat
+#### rhysd/vim-clang-format
 ```vim
 let g:clang_format#style_options = {
     \ 'ColumnLimit' : "0",
@@ -494,7 +504,7 @@ refs
 : [CLANG-FORMAT STYLE OPTIONS](https://clang.llvm.org/docs/ClangFormatStyleOptions.html)
 [clang-format: Align asterisk (\*) of pointer declaration with variable name Ask](https://stackoverflow.com/questions/38392889/clang-format-align-asterisk-of-pointer-declaration-with-variable-name)
 
-#### FAQ
+##### FAQ
 - Can clang-format align a block of #defines for me?
 目前clang-format还支持不了宏定义的对齐, 从llvm的讨论看，比较有争议
 
@@ -502,10 +512,48 @@ refs
 : [stachoverflow: Can clang-format align a block of #defines for me?](https://stackoverflow.com/questions/38620019/can-clang-format-align-a-block-of-defines-for-me)
 [clang-format: Add new style option AlignConsecutiveMacros](https://reviews.llvm.org/D28462?id=93341)
 
-### easymotion
-[github](https://github.com/easymotion/vim-easymotion)
+#### godlygeek/tabular
 
-#### uage
+### Searching and Find
+#### ctrlpvim/ctrlp.vim
+[github](https://github.com/ctrlpvim/ctrlp.vim)
+Full path fuzzy file, buffer, mru, tag, ... finder for Vim.
+
+#### junegunn/fzf.vim
+[github](https://github.com/junegunn/fzf.vim)
+fuzzy finder can be used with any list; files, command history, processes, hostnames, bookmarks, git commits, etc.
+
+#### mileszs/ack.vim
+1. configuration
+```vim
+""""""""""""""""""""""""""""""
+" Vundle:ack
+""""""""""""""""""""""""""""""
+let g:ackhighlight=1
+"let g:ack_autofold_results=1
+```
+#### rking/ag.vim
+1. configuration
+```vim
+""""""""""""""""""""""""""""""
+" Vundle:ag
+""""""""""""""""""""""""""""""
+let g:ag_highlight=1
+nnoremap <silent><F3> :Ag!<CR>
+```
+
+#### wsdjeg/FlyGrep.vim
+1. configuration
+```vim
+""""""""""""""""""""""""""""""
+" Vundle: FlyGrep.vim
+""""""""""""""""""""""""""""""
+nnoremap <C-F> :FlyGrep<CR>
+```
+
+#### easymotion/vim-easymotion
+[github](https://github.com/easymotion/vim-easymotion)
+1. usage
 跳转到当前光标前后的位置(w/b)
 ```vim
 <leader><leader>w
@@ -524,33 +572,4 @@ refs
 ```vim
 <leader><leader>h
 <leader><leader>l
-```
-
-### ack.vim
-#### configuration
-```vim
-""""""""""""""""""""""""""""""
-" Vundle:ack
-""""""""""""""""""""""""""""""
-let g:ackhighlight=1
-"let g:ack_autofold_results=1
-```
-
-### ag.vim
-#### configuration
-```vim
-""""""""""""""""""""""""""""""
-" Vundle:ag
-""""""""""""""""""""""""""""""
-let g:ag_highlight=1
-nnoremap <silent><F3> :Ag!<CR>
-```
-
-### FlayGrep.vim
-#### configuration
-```vim
-""""""""""""""""""""""""""""""
-" Vundle: FlyGrep.vim
-""""""""""""""""""""""""""""""
-nnoremap <C-F> :FlyGrep<CR>
 ```

@@ -41,7 +41,7 @@ done'
 # cp arg1 to public-share
 share()
 {
-    sudo cp "$1" /mnt/lava_share/USER/zongmincui/
+    sudo cp -rf "$1" /home/zongmincui/share/
 }
 
 # command hint
@@ -297,10 +297,11 @@ function mmr() {
 
 function docrash()
 {
-	CRASH_EXTENSIONS=~/Workspace/ramdump/devtools/crash_analysis_suite/extensions/ ~/Workspace/ramdump/devtools/crash_analysis_suite/bin/crash -x "$1" "$2"
+	CRASH_EXTENSIONS=~/Workspace/ramdump/devtools/crash_analysis_suite/finch_bin/extensions/ ~/Workspace/ramdump/devtools/crash_analysis_suite/finch_bin/crash -x "$1" "$2"
 }
 
-backdoor()
-{
-    /home/zongmincui/bin/backdoor "$1" "$2" "$3"
-}
+# Go language environment variables GOROOT , GOPATH and PATH
+export GOROOT=/usr/local/go
+export GOPATH=$HOME/go
+export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
+export GOPROXY=https://goproxy.io

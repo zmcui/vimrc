@@ -73,6 +73,9 @@ set path+=**
 "nnoremap * *``
 nmap <leader>* :vimgrep /<C-R><C-W>/j %<CR>:copen<CR>
 
+" Copy then paste multiple times in Vim
+xnoremap p pgvy
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plug
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -100,16 +103,15 @@ Plug 'Yggdroot/indentLine'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 
-" Plug 'Shougo/echodoc.vim'
+Plug 'Shougo/echodoc.vim'
 Plug 'valloric/youcompleteme'
-" Plug 'rdnetto/ycm-generator'
-" Plug 'rip-rip/clang_complete'
 Plug 'ervandew/supertab'
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
 Plug 'scrooloose/nerdcommenter'
 " Plug 'townk/vim-autoclose'
 Plug 'Raimondi/delimitMate'
+Plug 'habamax/vim-skipit'
 
 Plug 'sheerun/vim-polyglot'
 Plug 'habamax/vim-skipit'
@@ -118,10 +120,12 @@ Plug 'habamax/vim-skipit'
 
 Plug 'chiel92/vim-autoformat'
 Plug 'rhysd/vim-clang-format'
-Plug 'godlygeek/tabular'
+Plug 'junegunn/vim-easy-align'
 
 Plug 'wsdjeg/FlyGrep.vim'
 Plug 'easymotion/vim-easymotion'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 " Plug 'ludovicchabant/vim-gutentags'
 " Initialize plugin system
 call plug#end()
@@ -360,6 +364,14 @@ let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standar
 let g:ctrlp_match_window = 'top'
 
 """"""""""""""""""""""""""""""
+" Plug: vim-scripts/doxygentoolkit.vim
+""""""""""""""""""""""""""""""
+let g:DoxygenToolkit_briefTag_funcName = "yes"
+let g:DoxygenToolkit_briefTag_pre=""
+" let g:DoxygenToolkit_paramTag_pre=""
+
+
+""""""""""""""""""""""""""""""
 " Vundle:indentLine
 """"""""""""""""""""""""""""""
 "打开缩进线
@@ -391,27 +403,47 @@ let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
 let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
 let g:SuperTabDefaultCompletionType = '<C-n>'
 " trigger semantic complete when type
-" let g:ycm_semantic_triggers =  {
-"                         \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
-"                         \ 'cs,lua,javascript': ['re!\w{2}'],
-"                         \ }
+let g:ycm_semantic_triggers =  {
+                         \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+                         \ 'cs,lua,javascript': ['re!\w{2}'],
+                         \ }
 highlight PMenu ctermfg=0 ctermbg=242 guifg=black guibg=darkgrey
 highlight PMenuSel ctermfg=242 ctermbg=8 guifg=darkgrey guibg=black
 
 let g:ycm_filetype_whitelist = { 
-			\ "c":1,
-			\ "cpp":1, 
-			\ "objc":1,
-			\ "sh":1,
-			\ "zsh":1,
-			\ "markdown":1,
-			\ "vim":1,
-			\ "CMakeLists.txt":1,
-			\ }
+	\ "c":1,
+	\ "cpp":1, 
+	\ "objc":1,
+	\ "sh":1,
+	\ "zsh":1,
+	\ "markdown":1,
+	\ "vim":1,
+	\ "CMakeLists.txt":1,
+	\ "python":1,
+	\ "Kconfig":1,
+	\ "Makefile":1,
+	\ }
+
+let g:ycm_filetype_blacklist = {
+      \ 'tagbar': 1,
+      \ 'notes': 1,
+      \ 'markdown': 1,
+      \ 'netrw': 1,
+      \ 'unite': 1,
+      \ 'text': 1,
+      \ 'vimwiki': 1,
+      \ 'pandoc': 1,
+      \ 'infolog': 1,
+      \ 'leaderf': 1,
+      \ 'mail': 1
+      \}
 " Let clangd fully control code completion
 " let g:ycm_clangd_uses_ycmd_caching = 0
 " Use installed clangd, not YCM-bundled clangd which doesn't get updates.
 " let g:ycm_clangd_binary_path = exepath("clangd")
+nnoremap <leader>gl :YcmCompleter GoToDeclaration<CR>
+nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
+nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
 
 """"""""""""""""""""""""""""""
 " Vundle:ultisnips
@@ -509,6 +541,16 @@ let g:NERDCommentEmptyLines = 1
 let g:NERDTrimTrailingWhitespace = 1
 
 """"""""""""""""""""""""""""""
+" Plug: 'Raimondi/delimitMate'
+""""""""""""""""""""""""""""""
+let delimitMate_jump_expansion = 1
+
+""""""""""""""""""""""""""""""
+" Plug: 'habamax/vim-skipit'
+""""""""""""""""""""""""""""""
+let g:skipit_default_mappings = 1
+
+""""""""""""""""""""""""""""""
 " Vundle:a.vim
 """"""""""""""""""""""""""""""
 " jump to header file
@@ -523,6 +565,7 @@ au BufRead,BufNewFile *.dmsg set filetype=dmsg
 """"""""""""""""""""""""""""""
 " Vundle: rhysd/vim-clang-format
 """"""""""""""""""""""""""""""
+let g:clang_format#detect_style_file = 1
 let g:clang_format#style_options = {
     \ 'ColumnLimit' : "0",
     \ 'IndentWidth' : 8,
@@ -547,6 +590,12 @@ let g:clang_format#style_options = {
     \ 'DerivePointerAlignment' : 'false',
     \ 'PointerAlignment' : 'Right',
     \}
+
+""""""""""""""""""""""""""""""
+" Plug: 'junegunn/vim-easy-align'
+""""""""""""""""""""""""""""""
+vmap <Leader>a <Plug>(EasyAlign)
+nmap <Leader>a <Plug>(EasyAlign)
 
 """"""""""""""""""""""""""""""
 " Plug: 'habamax/vim-skipit'
