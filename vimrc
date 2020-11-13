@@ -77,60 +77,6 @@ nmap <leader>* :vimgrep /<C-R><C-W>/j %<CR>:copen<CR>
 xnoremap p pgvy
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Plug
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
-
-" Specify a directory for plugins
-" - For Neovim: ~/.local/share/nvim/plugged
-" - Avoid using standard Vim directory names like 'plugin'
-call plug#begin('~/.vim/plugged')
-Plug 'altercation/vim-colors-solarized'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-Plug 'majutsushi/tagbar'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'vim-scripts/a.vim'
-Plug 'vim-scripts/doxygentoolkit.vim'
-Plug 'Yggdroot/indentLine'
-
-" Git helper
-Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
-
-Plug 'Shougo/echodoc.vim'
-Plug 'valloric/youcompleteme'
-Plug 'ervandew/supertab'
-Plug 'sirver/ultisnips'
-Plug 'honza/vim-snippets'
-Plug 'scrooloose/nerdcommenter'
-" Plug 'townk/vim-autoclose'
-Plug 'Raimondi/delimitMate'
-Plug 'habamax/vim-skipit'
-
-Plug 'sheerun/vim-polyglot'
-Plug 'habamax/vim-skipit'
-
-" Plug 'w0rp/ale'
-
-Plug 'chiel92/vim-autoformat'
-Plug 'rhysd/vim-clang-format'
-Plug 'junegunn/vim-easy-align'
-
-Plug 'wsdjeg/FlyGrep.vim'
-Plug 'easymotion/vim-easymotion'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-" Plug 'ludovicchabant/vim-gutentags'
-" Initialize plugin system
-call plug#end()
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set 9 lines to the cursor - when moving vertically using j/k
@@ -157,9 +103,6 @@ set cursorline
 if $COLORTERM == "gnome-terminal" || $TERM == "xterm-256color" || $TERM == "screen-256color"
   set t_Co=256
 endif
-
-" Enable syntax highlighting
-syntax enable 
 
 if has("gui_running")
   colorscheme solarized
@@ -300,7 +243,6 @@ inoremap <Leader>/*  /*
 iab xtime <c-r>=strftime("%d-%m-%y %H:%M:%S")<cr>
 iab xdate <c-r>=strftime("%a, %d %b %Y %H:%M:%S %z")<cr>
 
-
 """"""""""""""""""""""""""""""
 " Vundle:NerdTree
 """"""""""""""""""""""""""""""
@@ -364,15 +306,13 @@ let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standar
 let g:ctrlp_match_window = 'top'
 
 """"""""""""""""""""""""""""""
-" Plug: vim-scripts/doxygentoolkit.vim
+" Plug: 'sheerun/vim-polyglot'
 """"""""""""""""""""""""""""""
-let g:DoxygenToolkit_briefTag_funcName = "yes"
-let g:DoxygenToolkit_briefTag_pre=""
-" let g:DoxygenToolkit_paramTag_pre=""
-
+" polyglot_disabled should define before load plugin
+let g:polyglot_disabled = ['autoindent']
 
 """"""""""""""""""""""""""""""
-" Vundle:indentLine
+" Plug: indentLine
 """"""""""""""""""""""""""""""
 "打开缩进线
 let g:indentLine_char_list = ['|', '¦', '┆', '┊']
@@ -456,9 +396,11 @@ let g:UltiSnipsJumpBackwardTrigger="<c-k>"
 let g:UltiSnipsEditSplit="vertical"
 
 """"""""""""""""""""""""""""""
-" Vundle: FlyGrep.vim
+" Plug: vim-scripts/doxygentoolkit.vim
 """"""""""""""""""""""""""""""
-nnoremap <C-F> :FlyGrep<CR>
+let g:DoxygenToolkit_briefTag_funcName = "yes"
+let g:DoxygenToolkit_briefTag_pre=""
+" let g:DoxygenToolkit_paramTag_pre=""
 
 """"""""""""""""""""""""""""""
 " Vundle:cscope
@@ -587,6 +529,7 @@ let g:clang_format#style_options = {
     \ 'ContinuationIndentWidth' : 8,
     \ 'AlignConsecutiveDeclarations' : 'false',
     \ 'AlignConsecutiveAssignments' : 'false',
+    \ 'AlignConsecutiveMacros' : 'true',
     \ 'DerivePointerAlignment' : 'false',
     \ 'PointerAlignment' : 'Right',
     \}
@@ -712,3 +655,58 @@ function! MyToHtml(line1, line2)
   let g:html_use_css = old_css
 endfunction
 command! -range=% MyToHtml :call MyToHtml(<line1>,<line2>)
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Plug
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" Specify a directory for plugins
+" - For Neovim: ~/.local/share/nvim/plugged
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.vim/plugged')
+Plug 'altercation/vim-colors-solarized'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'majutsushi/tagbar'
+
+" Git
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+
+" Inteligence
+Plug 'valloric/youcompleteme'
+Plug 'ervandew/supertab'
+Plug 'vim-scripts/a.vim'
+
+" Coding
+Plug 'sirver/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'vim-scripts/doxygentoolkit.vim'
+Plug 'scrooloose/nerdcommenter'
+" Plug 'townk/vim-autoclose'
+Plug 'Raimondi/delimitMate'
+Plug 'habamax/vim-skipit'
+
+" Syntax and Indent
+Plug 'sheerun/vim-polyglot'
+Plug 'Yggdroot/indentLine'
+
+" Format
+Plug 'chiel92/vim-autoformat'
+Plug 'rhysd/vim-clang-format'
+Plug 'junegunn/vim-easy-align'
+
+" Search
+Plug 'easymotion/vim-easymotion'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+" Plug 'ludovicchabant/vim-gutentags'
+" Initialize plugin system
+call plug#end()

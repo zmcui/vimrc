@@ -305,3 +305,6 @@ export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 export GOPROXY=https://goproxy.io
+
+# fzf
+export FZF_DEFAULT_COMMAND='fdfind --type f --hidden --follow --exclude .git'
