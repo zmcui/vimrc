@@ -16,16 +16,13 @@ https://github.com/zmcui/vimrc
 ### PPA(Deprecated)
 > 很有可能跟新的版本某些feature没开，比如python, 导致youcomplteme插件的clangd功能把内存耗光，非常严重
 ```bash?linenums=false
-# run command to add the PPA
+# Add the PPA
 sudo add-apt-repository ppa:jonathonf/vim
 sudo apt update
 sudo apt install vim
 # To uninstall Vim 8.0 and downgrade it to the stock version in Ubuntu repository
 sudo apt install ppa-purge && sudo ppa-purge ppa:jonathonf/vim
-```
-
-删除ppa
-```bash?linenums=false
+# Remove the PPA
 sudo add-apt-repository --remove ppa:jonathonf/vim
 ```
 ref
@@ -107,6 +104,13 @@ use vimgrep to pipe search result of current buffer to Quickfix window, like
 ```
 ref
 : [pipe search result to other tab/window/buffer in VIM](https://stackoverflow.com/questions/13306664/pipe-search-result-to-other-tab-window-buffer-in-vim)
+
+## hex edit 
+```bash?linenums=false
+# try openning in binary mode (no EOL)
+vi -b xxx.bin
+```
+then `:%!xxd` -> `:%!xxd -r`
 
 # Vim Customization
 ## basic config
@@ -432,9 +436,27 @@ git config --global url."https://".insteadOf git://
 refs
 : [Update the ycmd submodule to the latest commit](https://github.com/ycm-core/YouCompleteMe/pull/3646)
 
-#### rdnetto/ycm-generator
+- clangd memory consumption problem and UI freeze
+They don't believe it is related to background indexing after all. I also learnt that you need to pass --background-index=false to actually disable it. That's why it didn't make a difference.
+```diff?linenums=false
+diff --git i/ycmd/completers/cpp/clangd_completer.py w/ycmd/completers/cpp/clangd_completer.py
+index cb42c95e..15a65810 100644
+--- i/ycmd/completers/cpp/clangd_completer.py
++++ w/ycmd/completers/cpp/clangd_completer.py
+@@ -149,6 +149,8 @@ def GetClangdCommand( user_options ):
+     put_header_insertion_decorators = ( put_header_insertion_decorators or
+                         arg.startswith( '-header-insertion-decorators' ) )
+     put_log = put_log or arg.startswith( '-log' )
++  # czm
++  CLANGD_COMMAND.append( '--background-index=false' )
+   if not put_header_insertion_decorators:
+     CLANGD_COMMAND.append( '-header-insertion-decorators=0' )
+   if resource_dir and not put_resource_dir:
+```
+refs
+: [lsp-mode + clangd memory consumption problem](https://www.reddit.com/r/emacs/comments/eme5zk/lspmode_clangd_memory_consumption_problem/)
 
-#### rip-rip/clang_complete
+#### rdnetto/ycm-generator
 
 #### ervandew/supertab
 

@@ -127,16 +127,17 @@ set noswapfile
 " set expandtab
 " Be smart when using tabs
 set smarttab
-" 1 tab == 2 spaces
-" set shiftwidth=2
-" set tabstop=2
+" number of space characters inserted for indentation
+set shiftwidth=4
+" 1 tab == 4 spaces
+set tabstop=4
 "Auto indent
 set ai
 "Smart indent
 set si
 "Wrap lines(default on)
 set wrap
-"paste from another application
+"<F2> as switch between paste and nopaste modes
 set pastetoggle=<F2>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -244,6 +245,66 @@ iab xtime <c-r>=strftime("%d-%m-%y %H:%M:%S")<cr>
 iab xdate <c-r>=strftime("%a, %d %b %Y %H:%M:%S %z")<cr>
 
 """"""""""""""""""""""""""""""
+" Plug: 'sheerun/vim-polyglot'
+""""""""""""""""""""""""""""""
+" polyglot_disabled should define before load plugin
+let g:polyglot_disabled = ['autoindent']
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Plug
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" Specify a directory for plugins
+" - For Neovim: ~/.local/share/nvim/plugged
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.vim/plugged')
+" interface
+Plug 'altercation/vim-colors-solarized'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'preservim/tagbar'
+
+" Git
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+
+" IntelliSense
+Plug 'valloric/youcompleteme'
+Plug 'ervandew/supertab'
+Plug 'vim-scripts/a.vim'
+Plug 'sirver/ultisnips'
+Plug 'honza/vim-snippets'
+Plug 'vim-scripts/doxygentoolkit.vim'
+Plug 'scrooloose/nerdcommenter'
+" Plug 'townk/vim-autoclose'
+Plug 'Raimondi/delimitMate'
+Plug 'habamax/vim-skipit'
+
+" Syntax and Indent
+Plug 'sheerun/vim-polyglot'
+Plug 'Yggdroot/indentLine'
+
+" Format
+Plug 'chiel92/vim-autoformat'
+Plug 'rhysd/vim-clang-format'
+Plug 'junegunn/vim-easy-align'
+
+" Search
+Plug 'easymotion/vim-easymotion'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+" Plug 'ludovicchabant/vim-gutentags'
+" Initialize plugin system
+call plug#end()
+
+""""""""""""""""""""""""""""""
 " Vundle:NerdTree
 """"""""""""""""""""""""""""""
 map <F9> :NERDTreeToggle<CR>
@@ -306,12 +367,6 @@ let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standar
 let g:ctrlp_match_window = 'top'
 
 """"""""""""""""""""""""""""""
-" Plug: 'sheerun/vim-polyglot'
-""""""""""""""""""""""""""""""
-" polyglot_disabled should define before load plugin
-let g:polyglot_disabled = ['autoindent']
-
-""""""""""""""""""""""""""""""
 " Plug: indentLine
 """"""""""""""""""""""""""""""
 "打开缩进线
@@ -324,6 +379,17 @@ let g:indentLine_conceallevel = 1
 " Vundle:YouCompleteMe
 """"""""""""""""""""""""""""""
 let g:ycm_use_clangd = 1 	"libclang/clangd
+" let g:ycm_clangd_args = ['-log=verbose', '-pretty', '--background-index=false']
+" Let clangd fully control code completion
+let g:ycm_clangd_uses_ycmd_caching = 0
+" use C/C++ syntax highlighting in the popup for C-family languages
+augroup MyYCMCustom
+  autocmd!
+  autocmd FileType c,cpp let b:ycm_hover = {
+    \ 'command': 'GetDoc',
+    \ 'syntax': &filetype
+    \ }
+augroup END
 
 set completeopt=menu,menuone "no completion in the preview window
 let g:ycm_add_preview_to_completeopt = 0 "no add preview
@@ -377,10 +443,6 @@ let g:ycm_filetype_blacklist = {
       \ 'leaderf': 1,
       \ 'mail': 1
       \}
-" Let clangd fully control code completion
-" let g:ycm_clangd_uses_ycmd_caching = 0
-" Use installed clangd, not YCM-bundled clangd which doesn't get updates.
-" let g:ycm_clangd_binary_path = exepath("clangd")
 nnoremap <leader>gl :YcmCompleter GoToDeclaration<CR>
 nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
 nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
@@ -400,11 +462,35 @@ let g:UltiSnipsEditSplit="vertical"
 """"""""""""""""""""""""""""""
 let g:DoxygenToolkit_briefTag_funcName = "yes"
 let g:DoxygenToolkit_briefTag_pre=""
-" let g:DoxygenToolkit_paramTag_pre=""
+let g:DoxygenToolkit_briefTag_post=":"
+let g:DoxygenToolkit_paramTag_pre="@"
+let g:DoxygenToolkit_paramTag_post=":"
+let g:DoxygenToolkit_returnTag="Return:"
 
 """"""""""""""""""""""""""""""
 " Vundle:cscope
 """"""""""""""""""""""""""""""
+function! AddScope()
+    " set csprg=/usr/local/bin/cscope
+    " set cscopetagorder=1
+    " set cscopetag
+    set nocsverb
+    " add any database in current directory
+    if filereadable("cscope.out")
+        cs add cscope.out
+    endif
+    set csverb
+endfunction
+
+function! GenerateScope()
+  call system('find . ! -path .git ! -type l -name "*.[ch]" -print >cscope.files')
+  call system('find . ! -path .git ! -type l -name "*.cpp" -print >>cscope.files')
+  call system('cscope -bkq -i cscope.files')
+  call AddScope()
+endfunction
+
+command! Cscope call GenerateScope()
+
 if has("cscope")
 " use quickfix window instead of default way
 set cscopequickfix=s-,c-,d-,i-,t-,e-,g-
@@ -508,31 +594,50 @@ au BufRead,BufNewFile *.dmsg set filetype=dmsg
 " Vundle: rhysd/vim-clang-format
 """"""""""""""""""""""""""""""
 let g:clang_format#detect_style_file = 1
-let g:clang_format#style_options = {
-    \ 'ColumnLimit' : "0",
-    \ 'IndentWidth' : 8,
-    \ 'UseTab' : 'Always',
-    \ 'BreakBeforeBraces' : 'Linux',
-    \ 'AllowShortIfStatementsOnASingleLine' : 'false',
-    \ 'AllowShortLoopsOnASingleLine' : 'false',
-    \ 'AllowShortFunctionsOnASingleLine' : 'false',
-    \ 'IndentCaseLabels' : 'false',
-    \ 'AlignEscapedNewlinesLeft' : 'false',
-    \ 'AlignTrailingComments' : 'true',
-    \ 'SpacesBeforeTrailingComments' : 3,
-    \ 'AllowAllParametersOfDeclarationOnNextLine' : 'false',
-    \ 'AlignAfterOpenBracket' : 'true',
-    \ 'SpaceAfterCStyleCast' : 'false',
-    \ 'MaxEmptyLinesToKeep' : 2,
-    \ 'BreakBeforeBinaryOperators' : 'NonAssignment',
-    \ 'SortIncludes' : 'false',
-    \ 'ContinuationIndentWidth' : 8,
-    \ 'AlignConsecutiveDeclarations' : 'false',
-    \ 'AlignConsecutiveAssignments' : 'false',
-    \ 'AlignConsecutiveMacros' : 'true',
-    \ 'DerivePointerAlignment' : 'false',
-    \ 'PointerAlignment' : 'Right',
-    \}
+" Your filetype specific options
+let g:clang_format#filetype_style_options = {
+	\   'cpp' : {
+    \          "BasedOnStyle" : "Google",
+	\          "ColumnLimit" : "0",
+	\          "IndentCaseLabels" : "true",
+	\          "IndentWidth" : 4,
+	\          "ContinuationIndentWidth" : 4,
+	\          "BreakBeforeBraces" : "Linux",
+	\          "AlignConsecutiveDeclarations" : "false",
+	\          "AlignConsecutiveAssignments" : "false",
+	\          "AlignConsecutiveMacros" : "true",
+	\          "Standard" : "Cpp11",
+	\          "TabWidth" : 8,
+	\          "UseTab" : "Never",
+	\           },
+	\   'c' : {
+	\          "ColumnLimit" : "0",
+	\          "IndentWidth" : 8,
+	\          "BreakBeforeBraces" : "Linux",
+	\          "AllowShortIfStatementsOnASingleLine" : "false",
+	\          "AllowShortLoopsOnASingleLine" : "false",
+	\          "AllowShortFunctionsOnASingleLine" : "false",
+	\          "IndentCaseLabels" : "false",
+	\          "AlignEscapedNewlinesLeft" : "false",
+	\          "AlignTrailingComments" : "true",
+	\          "SpacesBeforeTrailingComments" : 3,
+	\          "AllowAllParametersOfDeclarationOnNextLine" : "false",
+	\          "AlignAfterOpenBracket" : "true",
+	\          "SpaceAfterCStyleCast" : "false",
+	\          "MaxEmptyLinesToKeep" : 2,
+	\          "BreakBeforeBinaryOperators" : "NonAssignment",
+	\          "SortIncludes" : "false",
+	\          "ContinuationIndentWidth" : 8,
+	\          "AlignConsecutiveDeclarations" : "false",
+	\          "AlignConsecutiveAssignments" : "false",
+	\          "AlignConsecutiveMacros" : "true",
+	\          "DerivePointerAlignment" : "false",
+	\          "PointerAlignment" : "Right",
+	\          "Standard" : "Cpp11",
+	\          "TabWidth" : 8,
+	\          "UseTab" : "Always",
+	\         },
+	\ }
 
 """"""""""""""""""""""""""""""
 " Plug: 'junegunn/vim-easy-align'
@@ -549,6 +654,11 @@ let g:skipit_default_mappings = 1
 " Plug: 'airblade/vim-gitgutter'
 """"""""""""""""""""""""""""""
 " let g:gitgutter_diff_args='--cached'
+function! GitStatus()
+  let [a,m,r] = GitGutterGetHunkSummary()
+  return printf('+%d ~%d -%d', a, m, r)
+endfunction
+set statusline+=%{GitStatus()}
 
 """"""""""""""""""""""""""""""
 " Vundle: vim-gutentags
@@ -655,58 +765,3 @@ function! MyToHtml(line1, line2)
   let g:html_use_css = old_css
 endfunction
 command! -range=% MyToHtml :call MyToHtml(<line1>,<line2>)
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Plug
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-if empty(glob('~/.vim/autoload/plug.vim'))
-  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
-
-" Specify a directory for plugins
-" - For Neovim: ~/.local/share/nvim/plugged
-" - Avoid using standard Vim directory names like 'plugin'
-call plug#begin('~/.vim/plugged')
-Plug 'altercation/vim-colors-solarized'
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
-Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
-Plug 'majutsushi/tagbar'
-
-" Git
-Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
-
-" Inteligence
-Plug 'valloric/youcompleteme'
-Plug 'ervandew/supertab'
-Plug 'vim-scripts/a.vim'
-
-" Coding
-Plug 'sirver/ultisnips'
-Plug 'honza/vim-snippets'
-Plug 'vim-scripts/doxygentoolkit.vim'
-Plug 'scrooloose/nerdcommenter'
-" Plug 'townk/vim-autoclose'
-Plug 'Raimondi/delimitMate'
-Plug 'habamax/vim-skipit'
-
-" Syntax and Indent
-Plug 'sheerun/vim-polyglot'
-Plug 'Yggdroot/indentLine'
-
-" Format
-Plug 'chiel92/vim-autoformat'
-Plug 'rhysd/vim-clang-format'
-Plug 'junegunn/vim-easy-align'
-
-" Search
-Plug 'easymotion/vim-easymotion'
-Plug 'ctrlpvim/ctrlp.vim'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
-" Plug 'ludovicchabant/vim-gutentags'
-" Initialize plugin system
-call plug#end()
