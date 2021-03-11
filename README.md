@@ -14,7 +14,6 @@ https://github.com/zmcui/vimrc
 # Installation
 ## VIM 8.0
 ### PPA(Deprecated)
-> 很有可能跟新的版本某些feature没开，比如python, 导致youcomplteme插件的clangd功能把内存耗光，非常严重
 ```bash?linenums=false
 # Add the PPA
 sudo add-apt-repository ppa:jonathonf/vim
@@ -28,7 +27,7 @@ sudo add-apt-repository --remove ppa:jonathonf/vim
 ref
 : [Vim 8.0 Released! How to install it in Ubuntu 16.04](http://tipsonubuntu.com/2016/09/13/vim-8-0-released-install-ubuntu-16-04)
 
-### SRC
+### SRC(Recommended)
 默认安装的 Vim是支持python的，所以安装最新版本有点折腾
 The actual location of the directory is controlled by --prefix
 ```bash?linenums=false
@@ -113,8 +112,19 @@ vi -b xxx.bin
 then `:%!xxd` -> `:%!xxd -r`
 
 # Vim Customization
-## basic config
-### quickfix
+## Basic Config
+### Indention
+> indention cfg cooperate with vim-autoformat plugin
+```vim?linenums=false
+" Use spaces instead of tabs
+set expandtab
+" number of space characters inserted for indentation
+set shiftwidth=4
+" 1 tab == 4 spaces
+set tabstop=4
+```
+
+### Quickfix
 - fitting window height
 ```vim
 au FileType qf call AdjustWindowHeight(3, 10)
@@ -125,7 +135,7 @@ endfunction
 ref
 : [Automatically fitting a quickfix window height](http://vim.wikia.com/wiki/Automatically_fitting_a_quickfix_window_height) 
 
-### tabs
+### tab pages
 - Navigation
 ```vim
 "go to next tab
@@ -474,6 +484,9 @@ Skip text in INSERT mode.
 If you have g:skipit_default_mappings set to 1 then while INSERT mode on press \<CTRL-L\> l to skip everything until parentheses, bars or quotes and place cursor right after them.
 
 ### Syntax
+#### sheerun/vim-polyglot
+A collection of language packs for Vim.
+
 #### vim-scripts/Logcat-syntax-highlighter
 
 #### plasticboy/vim-markdown
@@ -481,8 +494,6 @@ If you have g:skipit_default_mappings set to 1 then while INSERT mode on press \
 #### vhda/verilog_systemverilog.vim
 
 #### octol/vim-cpp-enhanced-highlight
-
-#### sheerun/vim-polyglot
 
 ### Syntastic
 #### scrooloose/syntastic

@@ -124,7 +124,7 @@ set noswapfile
 " => Text, tab and indent related
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Use spaces instead of tabs
-" set expandtab
+set expandtab
 " Be smart when using tabs
 set smarttab
 " number of space characters inserted for indentation
@@ -366,10 +366,11 @@ let g:ctrlp_user_command = 'find %s -type f'       " MacOSX/Linux
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standard']
 let g:ctrlp_match_window = 'top'
 
+let g:ctrlp_mruf_default_order = 0
+
 """"""""""""""""""""""""""""""
 " Plug: indentLine
 """"""""""""""""""""""""""""""
-"打开缩进线
 let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 let g:indentLine_color_term = 238
 " let g:indentLine_concealcursor = 'inc'
@@ -378,8 +379,10 @@ let g:indentLine_conceallevel = 1
 """"""""""""""""""""""""""""""
 " Vundle:YouCompleteMe
 """"""""""""""""""""""""""""""
-let g:ycm_use_clangd = 1 	"libclang/clangd
-" let g:ycm_clangd_args = ['-log=verbose', '-pretty', '--background-index=false']
+" libclang or clangd(recommanded)
+let g:ycm_use_clangd = 1
+" clangd memory consumption problem and UI freeze
+let g:ycm_clangd_args = ['-log=verbose', '-pretty', '--background-index=false']
 " Let clangd fully control code completion
 let g:ycm_clangd_uses_ycmd_caching = 0
 " use C/C++ syntax highlighting in the popup for C-family languages
@@ -462,10 +465,10 @@ let g:UltiSnipsEditSplit="vertical"
 """"""""""""""""""""""""""""""
 let g:DoxygenToolkit_briefTag_funcName = "yes"
 let g:DoxygenToolkit_briefTag_pre=""
-let g:DoxygenToolkit_briefTag_post=":"
+let g:DoxygenToolkit_briefTag_post="-"
 let g:DoxygenToolkit_paramTag_pre="@"
 let g:DoxygenToolkit_paramTag_post=":"
-let g:DoxygenToolkit_returnTag="Return:"
+let g:DoxygenToolkit_returnTag="Return: 0 on success, error code otherwise."
 
 """"""""""""""""""""""""""""""
 " Vundle:cscope
@@ -596,54 +599,60 @@ au BufRead,BufNewFile *.dmsg set filetype=dmsg
 let g:clang_format#detect_style_file = 1
 " Your filetype specific options
 let g:clang_format#filetype_style_options = {
-	\   'cpp' : {
+    \   'cpp' : {
     \          "BasedOnStyle" : "Google",
-	\          "ColumnLimit" : "0",
-	\          "IndentCaseLabels" : "true",
-	\          "IndentWidth" : 4,
-	\          "ContinuationIndentWidth" : 4,
-	\          "BreakBeforeBraces" : "Linux",
-	\          "AlignConsecutiveDeclarations" : "false",
-	\          "AlignConsecutiveAssignments" : "false",
-	\          "AlignConsecutiveMacros" : "true",
-	\          "Standard" : "Cpp11",
-	\          "TabWidth" : 8,
-	\          "UseTab" : "Never",
-	\           },
-	\   'c' : {
-	\          "ColumnLimit" : "0",
-	\          "IndentWidth" : 8,
-	\          "BreakBeforeBraces" : "Linux",
-	\          "AllowShortIfStatementsOnASingleLine" : "false",
-	\          "AllowShortLoopsOnASingleLine" : "false",
-	\          "AllowShortFunctionsOnASingleLine" : "false",
-	\          "IndentCaseLabels" : "false",
-	\          "AlignEscapedNewlinesLeft" : "false",
-	\          "AlignTrailingComments" : "true",
-	\          "SpacesBeforeTrailingComments" : 3,
-	\          "AllowAllParametersOfDeclarationOnNextLine" : "false",
-	\          "AlignAfterOpenBracket" : "true",
-	\          "SpaceAfterCStyleCast" : "false",
-	\          "MaxEmptyLinesToKeep" : 2,
-	\          "BreakBeforeBinaryOperators" : "NonAssignment",
-	\          "SortIncludes" : "false",
-	\          "ContinuationIndentWidth" : 8,
-	\          "AlignConsecutiveDeclarations" : "false",
-	\          "AlignConsecutiveAssignments" : "false",
-	\          "AlignConsecutiveMacros" : "true",
-	\          "DerivePointerAlignment" : "false",
-	\          "PointerAlignment" : "Right",
-	\          "Standard" : "Cpp11",
-	\          "TabWidth" : 8,
-	\          "UseTab" : "Always",
-	\         },
-	\ }
+    \          "ColumnLimit" : "0",
+    \          "IndentCaseLabels" : "true",
+    \          "IndentWidth" : 4,
+    \          "ContinuationIndentWidth" : 4,
+    \          "BreakBeforeBraces" : "Linux",
+    \          "AlignConsecutiveDeclarations" : "false",
+    \          "AlignConsecutiveAssignments" : "false",
+    \          "AlignConsecutiveMacros" : "true",
+    \          "Standard" : "Cpp11",
+    \          "TabWidth" : 8,
+    \          "UseTab" : "Never",
+    \          "DeriveLineEnding": "false",
+    \          "UseCRLF"  :  "false"
+    \           },
+    \   'c' : {
+    \          "ColumnLimit" : "0",
+    \          "IndentWidth" : 8,
+    \          "BreakBeforeBraces" : "Linux",
+    \          "AllowShortIfStatementsOnASingleLine" : "false",
+    \          "AllowShortLoopsOnASingleLine" : "false",
+    \          "AllowShortFunctionsOnASingleLine" : "false",
+    \          "IndentCaseLabels" : "false",
+    \          "AlignEscapedNewlinesLeft" : "false",
+    \          "AlignTrailingComments" : "true",
+    \          "SpacesBeforeTrailingComments" : 3,
+    \          "AllowAllParametersOfDeclarationOnNextLine" : "false",
+    \          "AlignAfterOpenBracket" : "true",
+    \          "SpaceAfterCStyleCast" : "false",
+    \          "MaxEmptyLinesToKeep" : 2,
+    \          "BreakBeforeBinaryOperators" : "NonAssignment",
+    \          "SortIncludes" : "false",
+    \          "ContinuationIndentWidth" : 8,
+    \          "AlignConsecutiveDeclarations" : "false",
+    \          "AlignConsecutiveAssignments" : "false",
+    \          "AlignConsecutiveMacros" : "true",
+    \          "DerivePointerAlignment" : "false",
+    \          "PointerAlignment" : "Right",
+    \          "Standard" : "Cpp11",
+    \          "TabWidth" : 8,
+    \          "UseTab" : "Always",
+    \          "DeriveLineEnding": "false",
+    \          "UseCRLF"  :  "false"
+    \         },
+    \ }
 
 """"""""""""""""""""""""""""""
 " Plug: 'junegunn/vim-easy-align'
 """"""""""""""""""""""""""""""
-vmap <Leader>a <Plug>(EasyAlign)
-nmap <Leader>a <Plug>(EasyAlign)
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
 
 """"""""""""""""""""""""""""""
 " Plug: 'habamax/vim-skipit'
