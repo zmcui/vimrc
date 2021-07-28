@@ -46,14 +46,14 @@ cd vim
             --prefix=/usr/local
 # 安装目录在/usr/local/bin/vim
 
-make VIMRUNTIMEDIR=/usr/local/share/vim/vim81
+make VIMRUNTIMEDIR=/usr/local/share/vim/vim82
 
 sudo make install
 ```
 
 卸载
 ```bash?linenums=false
-make VIMRUNTIMEDIR=/usr/local/share/vim/vim81
+make VIMRUNTIMEDIR=/usr/local/share/vim/vim82
 sudo make uninstall
 ```
 
@@ -135,7 +135,7 @@ endfunction
 ref
 : [Automatically fitting a quickfix window height](http://vim.wikia.com/wiki/Automatically_fitting_a_quickfix_window_height) 
 
-### tab pages
+### tabpage
 - Navigation
 ```vim
 "go to next tab
@@ -343,6 +343,8 @@ refs
 ### Interface
 #### altercation/vim-colors-solarized
 #### vim-airline/vim-airline
+automatically displays all buffers when there's only one tab open.
+
 #### vim-airline/vim-airline-themes
 #### scrooloose/nerdtree
 #### majutsushi/tagbar
@@ -365,20 +367,33 @@ Diff between current file and current file 3 commits ago:
 
 ### IntelliSense 
 #### Valloric/YouCompleteMe
-1. User Guide
+- [Linux 64-bit installlation](https://github.com/ycm-core/YouCompleteMe#linux-64-bit)
+
+Compiling YCM with semantic support for C-family languages through clangd:
+```bash?linenums=false
+# Install YCM plugin via Vundle
+# Install cmake, vim and python
+apt install build-essential cmake vim-nox python3-dev
+# Install mono-complete, go, node, java and npm
+apt install mono-complete golang nodejs default-jdk npm
+# Compile YCM
+cd ~/.vim/bundle/YouCompleteMe
+python3 install.py --clangd-completer
+```
+
 - C-family Semantic Completion
 There are 2 methods which can be used to provide compile flags to clang:
-Option 1: Use a compilation database
+1. Use a compilation database
 > If no .ycm_extra_conf.py is found, YouCompleteMe automatically tries to load a compilation database if there is one.
 
-Option 2: Provide the flags manually
+2. Provide the flags manually
 > For a more elaborate example, see ycmd's own[ .ycm_extra_conf.py](https://raw.githubusercontent.com/Valloric/ycmd/66030cd94299114ae316796f3cad181cac8a007c/.ycm_extra_conf.py). You should be able to use it as a starting point
 
-2. config
-- `g:ycm_confirm_extra_conf`
+- configs
+1. `g:ycm_confirm_extra_conf`
  disable prompt if '.ycm_extra_conf.py' is safe to be loaded everytime
  
-- g:ycm_use_clangd
+2. g:ycm_use_clangd
 ```bash?linenums=false
 # install YCM with both libclang and clangd enabled
 cd ~/.vim/bundle/YouCompleteMe
@@ -399,7 +414,7 @@ I[16:14:11.826] Updating file /home/zongmincui/work/baremetal-test/ctest/modules
 I[16:14:11.837] Dropped diagnostic outside main file: : too many errors emitted, stopping now
 ```
 
-- `g:ycm_semantic_triggers`
+3. `g:ycm_semantic_triggers`
 默认输入情况下，是符号补全，YCM 的语义补全一直使用被动触发（输入 ->或 . 或 ::，或者按 CTRL+SPACE/Z）
 ```vim
 " trigger semantic complete when type
@@ -410,25 +425,25 @@ let g:ycm_semantic_triggers =  {
 ```
 这里我们追加了一个正则表达式，代表相关语言的源文件中，用户只需要输入符号的两个字母，即可自动弹出语义补全：
 
-3. FAQ:
-- prompt header file not found when open source file
+- FAQ:
+1. prompt header file not found when open source file
 删除.ycm_extra_conf.py配置里的`'-I’, '.'`
 
-- YCM doesn't complete any identifier that exists in a header file
+2. YCM doesn't complete any identifier that exists in a header file
 That is the right behaviour, you're not seeing anything strange. The identifier completer will propose candidates from the currently open buffers, so if you don't have the headers file as open buffers you will not get identifiers from that file as candidates. 
 
 refs
 : [#1624](https://github.com/Valloric/YouCompleteMe/issues/1624)
 [how to enable semantic complete when typing](https://zhuanlan.zhihu.com/p/33046090)
 
-- Navigating the Linux Kernel source tree with YouCompleteMe
+3. Navigating the Linux Kernel source tree with YouCompleteMe
 the [bear](https://github.com/rizsotto/Bear) utility takes the approach of intercepting the build calls, gather the relevant info and generate a complete compilation database. 
 
 refs
 : [Navigating the Linux Kernel source tree with YouCompleteMe](https://www.scalyr.com/blog/searching-1tb-sec-systems-engineering-before-algorithms/)
 [YouCompleteMe 中容易忽略的配置](https://zhuanlan.zhihu.com/p/33046090)
 
-- Failed to connect to go.googlesource.com
+4. Failed to connect to go.googlesource.com
 ```bash?linenums=false
 # 配置git全局代理
 git config --global http.proxy "localhost:1080"
@@ -438,7 +453,7 @@ git config --global --unset http.proxy
 refs
 : [Git设置代理拉取](https://my.oschina.net/dingdayu/blog/1509885)
 
-- fails to clone git://github.com/mitsuhiko/flask-sphinx-themes.git
+5. fails to clone git://github.com/mitsuhiko/flask-sphinx-themes.git
 ```bash?linenums=false
 # You can force all git: to use https with some .gitconfig magic:
 git config --global url."https://".insteadOf git://
@@ -446,7 +461,7 @@ git config --global url."https://".insteadOf git://
 refs
 : [Update the ycmd submodule to the latest commit](https://github.com/ycm-core/YouCompleteMe/pull/3646)
 
-- clangd memory consumption problem and UI freeze
+6. clangd memory consumption problem and UI freeze
 They don't believe it is related to background indexing after all. I also learnt that you need to pass --background-index=false to actually disable it. That's why it didn't make a difference.
 ```diff?linenums=false
 diff --git i/ycmd/completers/cpp/clangd_completer.py w/ycmd/completers/cpp/clangd_completer.py

@@ -37,6 +37,7 @@ set history=1000      	" Lines of history VIM has to remember
 set showcmd 		" Show incomplete cmds down the bottom
 set showmode 		" Show current mode down the bottom
 set backspace=2 	" make backspace work like most other programs
+set nomodeline
 
 " Uncomment the following to have Vim jump to the last position when
 " reopening a file
@@ -141,7 +142,7 @@ set wrap
 set pastetoggle=<F2>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => tabs, windows and buffers
+" => tabpage, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " open new tab page in quickfix window results
 "set switchbuf+=usetab,newtab
@@ -163,6 +164,10 @@ map <leader>tn :tabn<cr>
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
 map <leader>te :edit <c-r>=expand("%:p:h")<cr>/
+
+" vim-powered terminal in new tab
+map <Leader>tt :tab term ++close<cr>
+tmap <Leader>tt <c-w>:tab term ++close<cr>
 
 " Don't move cursor to start of line after various commands.
 set nostartofline
@@ -355,7 +360,7 @@ let g:tagbar_autofocus=1
 let g:tagbar_sort = 0
 
 """"""""""""""""""""""""""""""
-" Vundle:ctrlp
+" plug: ctrlp
 """"""""""""""""""""""""""""""
 " buffer mode in default
 let g:ctrlp_cmd = 'CtrlPBuffer'
@@ -367,6 +372,10 @@ let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files -co --exclude-standar
 let g:ctrlp_match_window = 'top'
 
 let g:ctrlp_mruf_default_order = 0
+
+""""""""""""""""""""""""""""""
+" Plug: fzf
+""""""""""""""""""""""""""""""
 
 """"""""""""""""""""""""""""""
 " Plug: indentLine
@@ -512,11 +521,22 @@ au BufEnter /* call LoadCscope()
 endif
 
 " cscope bindings
+"   's' symbol: find all references to the token under cursor
+"   'g' global: find global definition(s) of the token under cursor
+"   'c' calls:  find all calls to the function name under cursor
+"   't' text:   find all instances of the text under cursor
+"   'e' egrep:  egrep search for the word under cursor
+"   'f' file:   open the filename under cursor
+"   'i' includes: find files that include the filename under cursor
+"   'd' called: find functions that function under cursor calls
+"   'a' assignments: find places where this symbol is assigned a value
+"   'S' struct: find struct definition under cursor
 nmap <leader>ss :cs find s <C-R>=expand("<cword>")<cr><cr>:copen<cr>
 nmap <leader>sg :cs find g <C-R>=expand("<cword>")<cr><cr>:copen<cr>
 nmap <leader>sc :cs find c <C-R>=expand("<cword>")<cr><cr>:copen<cr>
 nmap <leader>st :cs find t <C-R>=expand("<cword>")<cr><cr>:copen<cr>
-nmap <leader>se :cs find e <C-R>=expand("<cword>")<cr><cr>:copen<cr>
+" nmap <leader>se :cs find e <C-R>=expand("<cword>")<cr><cr>:copen<cr>
+nmap <leader>se :cs find e 
 nmap <leader>sf :cs find f <C-R>=expand("<cfile>")<cr><cr>
 nmap <leader>si :cs find i <C-R>=expand("<cfile>")<cr><cr>:copen<cr>
 nmap <leader>sd :cs find d <C-R>=expand("<cword>")<cr><cr>:copen<cr>

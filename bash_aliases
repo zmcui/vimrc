@@ -300,6 +300,12 @@ function docrash()
 	CRASH_EXTENSIONS=~/Workspace/ramdump/devtools/crash_analysis_suite/finch_bin/extensions/ ~/Workspace/ramdump/devtools/crash_analysis_suite/finch_bin/crash -x "$1" "$2"
 }
 
+function zmMount()
+{
+    sudo mount -t cifs //10.1.24.167/isp /mnt/fileserver/isp -o user=zongmincui,password=AAbbcc123,domain=asrmicro,rw,uid=1000
+    sudo mount -t cifs //10.1.24.167/fpga /mnt/fileserver/FPGA -o user=zongmincui,password=AAbbcc123,domain=asrmicro,rw,uid=1000
+}
+
 # Go language environment variables GOROOT , GOPATH and PATH
 export GOROOT=/usr/local/go
 export GOPATH=$HOME/go

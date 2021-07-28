@@ -1,0 +1,41 @@
+extends c
+
+## Iteration
+# for j
+snippet forj
+	for (int ${2:j} = 0; $2 < ${1:count}; $2${3:++}) {
+		${4}
+	}
+endsnippet
+
+# if define()...endif
+snippet ifdd
+#if defined(${1:FOO})
+	${2}
+#endif
+endsnippet
+
+# a = b;
+snippet eq
+${1:a} = ${2:b};
+endsnippet
+
+# int ret = 0;
+# snippet int
+# int ${1:ret} = ${2:0};
+# endsnippet
+
+# member_of
+snippet member_of
+#include <stddef.h>
+
+#define member_of(ptr, type, member) ({ \
+	const typeof(((type *)0)->member) *__mptr = (ptr); \
+	(type *)((char *)__mptr - offsetof(type,member));})
+endsnippet
+
+# container_of
+snippet container_of
+#define container_of(ptr, type, member) \
+	(type *)((char *)(ptr) - (char *) &((type *)0)->member)
+endsnippet
