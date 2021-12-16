@@ -614,6 +614,12 @@ au BufRead,BufNewFile *.logcat set filetype=logcat
 au BufRead,BufNewFile *.dmsg set filetype=dmsg
 
 """"""""""""""""""""""""""""""
+" Vundle: rhysd/vim-autoformat
+""""""""""""""""""""""""""""""
+let g:formatdef_autopep8 = "'autopep8 - --range '.a:firstline.' '.a:lastline"
+let g:formatters_python = ['autopep8']
+
+""""""""""""""""""""""""""""""
 " Vundle: rhysd/vim-clang-format
 """"""""""""""""""""""""""""""
 let g:clang_format#detect_style_file = 1

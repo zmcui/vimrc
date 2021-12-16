@@ -15,6 +15,13 @@ snippet ifdd
 #endif
 endsnippet
 
+# struct
+snippet struct
+struct ${1:foo} {
+	${2:bar};
+};
+endsnippet
+
 # member_of
 snippet member_of
 #include <stddef.h>
@@ -28,4 +35,20 @@ endsnippet
 snippet container_of
 #define container_of(ptr, type, member) \
 	(type *)((char *)(ptr) - (char *) &((type *)0)->member)
+endsnippet
+
+# likely & unlikely
+snippet likely
+#ifdef __cplusplus
+#   define CC_LIKELY( exp )    (__builtin_expect( !!(exp), true ))
+#   define CC_UNLIKELY( exp )  (__builtin_expect( !!(exp), false ))
+#else
+#   define CC_LIKELY( exp )    (__builtin_expect( !!(exp), 1 ))
+#   define CC_UNLIKELY( exp )  (__builtin_expect( !!(exp), 0 ))
+#endif
+endsnippet
+
+# api
+snippet api
+#define CAM_API __attribute__((visibility("default")))
 endsnippet

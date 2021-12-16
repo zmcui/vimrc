@@ -12,6 +12,11 @@ https://github.com/zmcui/vimrc
 [TOC]
 
 # Installation
+## Proxy
+```bash?linenums=false
+export HTTP_PROXY=shproxy.asrmicro.com:80
+export HTTPS_PROXY=shproxy.asrmicro.com:80
+```
 ## VIM 8.0
 ### PPA(Deprecated)
 ```bash?linenums=false

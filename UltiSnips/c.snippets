@@ -20,11 +20,6 @@ snippet eq
 ${1:a} = ${2:b};
 endsnippet
 
-# int ret = 0;
-# snippet int
-# int ${1:ret} = ${2:0};
-# endsnippet
-
 # member_of
 snippet member_of
 #include <stddef.h>
@@ -38,4 +33,34 @@ endsnippet
 snippet container_of
 #define container_of(ptr, type, member) \
 	(type *)((char *)(ptr) - (char *) &((type *)0)->member)
+endsnippet
+
+# likely & unlikely
+snippet likely
+#ifdef __cplusplus
+#   define CC_LIKELY( exp )    (__builtin_expect( !!(exp), true ))
+#   define CC_UNLIKELY( exp )  (__builtin_expect( !!(exp), false ))
+#else
+#   define CC_LIKELY( exp )    (__builtin_expect( !!(exp), 1 ))
+#   define CC_UNLIKELY( exp )  (__builtin_expect( !!(exp), 0 ))
+#endif
+endsnippet
+
+# api
+snippet api
+#define CAM_API __attribute__((visibility("default")))
+endsnippet
+
+# align_to
+snippet align
+#define ALIGN_TO(val, alignment) \
+    (((uintptr_t)(val) + ((alignment) - 1)) & ~((alignment) - 1))
+endsnippet
+
+##
+# TODO section
+snippet fixme 
+	/*! FIXME: ${1:fixme description here}
+	 *  \fixme $1
+	 */
 endsnippet
