@@ -12,129 +12,6 @@ alias gts='git status .'
 alias gtr='cd "$(git rev-parse --show-toplevel)"'
 # open (in vim) all modified files in a git rep
 alias diffvim='vim `git diff --name-only` -p'
-# to see if patch would apply cleanly in the first place
-alias p1='patch -p1 -g1 --dry-run'
-
-# mm replace libraries 
-alias mmreplace='(mm | grep "^Install:" || mm -B | grep "^Install:") | sed -e"s/^Install: //" | grep -ve "\(\.txt\|\.data\|\.bin\|\.yuv\)$" |
-while read so; do
-    pushd . &>/dev/null
-    while [ ! -e "./build/envsetup.sh" ]; do
-        if [ "$PWD" = "/" ]; then
-            echo envsetup.sh not found!
-            popd &>/dev/null
-            break
-        fi
-        cd ..
-    done
-    (adb remount | grep succeeded || (adb root; sleep 5; adb remount)) | cat
-    if [ -z "$MMREPLACETO" ]; then
-        echo "$PWD/$so -> /system/${so#*/system/}" | grep " /system/.*"
-        adb push "./$so" "/system/${so#*/system/}"
-    else
-        echo "$PWD/$so -> $MMREPLACETO" | grep " $MMREPLACETO"
-        adb push "./$so" "$MMREPLACETO"
-    fi
-    popd &>/dev/null
-done'
-
-# cp arg1 to public-share
-share()
-{
-    sudo cp -rf "$1" /home/zongmincui/share/
-}
-
-# command hint
-alias ch='echo "tar -czf xx.tar.gz xx" | echo "tar -xzvf xx.tar.gz" | echo "tar -cf xx.tar xx" | echo "tar -xf xx.tar" | echo "vimdiff do dp [c ]c [[ ]]" | echo "cscope -Rbq" | echo "git push ssh://zongmincui@source.asrmicro.com:29418/kernel/common HEAD:refs/for/fvp_ve_aemv8a_dev_4.4" | echo "git push ssh://zongmincui@source.asrmicro.com:29418/baremetal-test HEAD:refs/for/master:" | echo "git rebase -i HEAD~2"| echo "smbclient //fileserver/public-share -U asrmicro/zongmincui"'
-
-# mv to trash
-# alias rm=trash
-# alias rl='ls ~/.trash'
-# alias ur=undelfile
-
-undelfile()
-{
-    mv -i ~/.trash/$@ ./
-}
-
-trash()
-{
-    mv $@ ~/.trash/
-}
-
-cleartrash()
-{
-    /bin/rm -rf ~/.trash/*
-    # read -p "clear sure?[n]" confrim
-    # case "$confirm" in
-    #     Y)
-    #            /bin/rm -rf ~/.trash/*
-    #     ;;
-    #     y)
-    #            /bin/rm -rf ~/.trash/*
-    #     ;;
-    # esac;
-    #["$confirm" == "y"] || ["$confirm" == "Y"] && [/usr/bin/rm -rf ~/.trash/*]
-}
-
-#tombstone2line is a function
-tombstone2line () 
-{ 
-    OPTIND=1;
-    while getopts "l:s:" opt; do
-        case "$opt" in 
-            l)
-                log="$OPTARG";
-                echo "log=$log" 1>&2
-            ;;
-            s)
-                symbols="$OPTARG";
-                echo "symbols=$symbols" 1>&2
-            ;;
-            ?)
-                echo "Invalid Arguments, please use:" 1>&2;
-                echo "./dump_data_process.sh -l adb_logcat [ -s symbols_folder ]" 1>&2;
-                return 2
-            ;;
-        esac;
-    done;
-    if [ -n "$ANDROID_PRODUCT_OUT" ] && [ -z "$symbols" ]; then
-        echo "Use current android product out folder $ANDROID_PRODUCT_OUT/symbols as symbols folder" 1>&2;
-        symbols="$ANDROID_PRODUCT_OUT/symbols";
-    fi;
-    if [ "$symbols" == "" ]; then
-        echo "Absent Arguments, please use:" 1>&2;
-        echo "./dump_data_process.sh -l adb_logcat [ -s symbols_folder ]" 1>&2;
-        return 2;
-    fi;
-    if [ "$log" == "" ]; then
-        echo "Use ~/ll as default log param!";
-        log=~/ll;
-    fi;
-    if [ ! -e "$log" ]; then
-        echo "$log" does not exist 1>&2;
-        return 2;
-    fi;
-    if [ ! -d "$symbols" ]; then
-        echo "$symbols does not exist or it's not a folder" 1>&2;
-        return 2;
-    fi;
-    while read line; do
-        if echo "$line" | grep --color=auto --exclude-dir=.git -e 'Fatal signal ' &> /dev/null; then
-            echo;
-            echo "$line";
-            continue;
-        fi;
-        tmp="${line#*pc }";
-        tmp="${tmp%
-}";
-        echo "/${tmp#*/}";
-        tmp="${tmp% (*}";
-        relativepc="${tmp%% *}";
-        lib="${tmp##* }";
-        addr2line -e "$symbols/$lib" "$relativepc";
-    done <<< "$(sed $log -ne '/Fatal signal/,/Tombstone written to/p' | grep -e '#[0-9]\{1,\}  *pc\|Fatal signal ')"
-}
 
 #logcf
 #alias logcf='LL="$(date +%F.%T).logcat"; touch /tmp/"$LL"; ln -s /tmp/"$LL" "$LL"; adb wait-for-device; adb logcat -c | grep permitted && (adb root; adb wait-for-device; adb logcat -c); adb logcat -v time *:v | tee /tmp/"$LL"'
@@ -312,5 +189,21 @@ export GOPATH=$HOME/go
 export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
 export GOPROXY=https://goproxy.io
 
+# autojump
+source /usr/share/autojump/autojump.bash
+export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ;} history -a"
+
 # fzf
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 export FZF_DEFAULT_COMMAND='fdfind --type f --hidden --follow --exclude .git'
+
+# enable case insensitive completion
+bind 'set completion-ignore-case on'
+
+# git completion
+source /usr/share/bash-completion/completions/git
+
+# catapult environment variables CATAPULTROOT , TRACINGPATH and PATH
+export CATAPULTROOT=/home/zongmincui/workspace/github/catapult/
+export TRACINGPATH=$CATAPULTROOT/tracing/bin/
+export PATH=$TRACINGPATH:$PATH

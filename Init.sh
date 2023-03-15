@@ -16,4 +16,4 @@ fi
 ln -s `pwd`/UltiSnips ~/.vim/UltiSnips
 
 # install vundle for vim
-git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle
+# git clone https://github.com/gmarik/vundle.git ~/.vim/bundle/vundle

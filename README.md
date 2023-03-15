@@ -5,11 +5,27 @@ A  |2015.01.13|zongmincui|start up
 B  |2019.07.31|zongmincui|vim8 update
 C  |2019.08.03|zongmincui|replace vundle with plug
 D  |2020.09.29|zongmincui|fzf
+E  |2023.01.17|zongmincui|gf
 
 https://github.com/zmcui/vimrc
 
 ---
 [TOC]
+
+# Keyboard and Mouse
+## Keychron K2
+K2 registers function keys as multimedia keys by default, how to fix: 
+use `fn + x + l`(hold for 4 seconds) to set the function key row to 'function' mode. (usually all that's neccessary on windows)
+[Keychron Linux Function Keys](https://mikeshade.com/posts/keychron-linux-function-keys/)
+
+## Logitech G102
+```bash?linenums=false
+sudo add-apt-repository ppa:libratbag-piper/piper-libratbag-git
+sudo apt update
+sudo apt install piper
+```
+[github: piper](https://github.com/libratbag/piper)
+[Configure Logitech, Steelseries And Other Gaming Mice On Linux Using Piper](https://www.linuxuprising.com/2020/11/configure-logitech-steelseries-and.html)
 
 # Installation
 ## Proxy
@@ -17,6 +33,7 @@ https://github.com/zmcui/vimrc
 export HTTP_PROXY=shproxy.asrmicro.com:80
 export HTTPS_PROXY=shproxy.asrmicro.com:80
 ```
+
 ## VIM 8.0
 ### PPA(Deprecated)
 ```bash?linenums=false
@@ -70,11 +87,16 @@ sudo update-alternatives --install /usr/bin/vi vi /usr/local/bin/vim 1
 sudo update-alternatives --set vi /usr/local/bin/vim
 ```
 
-
 refs:
 [Building Vim from source](https://github.com/ycm-core/YouCompleteMe/wiki/Building-Vim-from-source)
 [Vim 8 支持 Python 3 的一些坑](https://www.jishuwen.com/d/2KE0)
 [Uninstalling Vim compiled from source](https://superuser.com/questions/623040/uninstalling-vim-compiled-from-source)
+
+## deploy
+```bash?linenums=false
+# prerequisite
+sudo apt install curl
+```
 
 # basic Usage
 ## format
@@ -115,6 +137,16 @@ ref
 vi -b xxx.bin
 ```
 then `:%!xxd` -> `:%!xxd -r`
+
+## goto file
+```vim?linenums=false
+[count]gf
+"" Edit the file whose name is under or after the cursor.
+
+[count]gF
+"" Same as "gf", except if a number follows the file name, then the cursor is positioned on that line in the file.
+```
+[Vim gF should open file and jump to line](https://stackoverflow.com/questions/36500099/vim-gf-should-open-file-and-jump-to-line)
 
 # Vim Customization
 ## Basic Config
@@ -231,6 +263,8 @@ refs
 ### Soure Code Tagging System
 #### Ctags
 ```bash?linenums=false
+# installing from apt
+sudo apt install ctags
 # generate tags under current dir
 ctags -R *
 ```
@@ -382,7 +416,7 @@ apt install build-essential cmake vim-nox python3-dev
 # Install mono-complete, go, node, java and npm
 apt install mono-complete golang nodejs default-jdk npm
 # Compile YCM
-cd ~/.vim/bundle/YouCompleteMe
+cd ~/.vim/plugged/youcompleteme
 python3 install.py --clangd-completer
 ```
 
