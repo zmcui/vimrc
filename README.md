@@ -15,7 +15,12 @@ https://github.com/zmcui/vimrc
 # Keyboard and Mouse
 ## Keychron K2
 K2 registers function keys as multimedia keys by default, how to fix: 
-use `fn + x + l`(hold for 4 seconds) to set the function key row to 'function' mode. (usually all that's neccessary on windows)
+```bash?linenums=false
+# 1. Set the keyboard to Windows mode via the side switch
+# 2. Use Fn + X + L (hold for 4 seconds) to set the function key row to "Function" mode. (usually all that's necessary on Windows)
+# 3. fix fnmode
+echo 0 | sudo tee /sys/module/hid_apple/parameters/fnmode
+```
 [Keychron Linux Function Keys](https://mikeshade.com/posts/keychron-linux-function-keys/)
 
 ## Logitech G102
