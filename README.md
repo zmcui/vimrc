@@ -23,6 +23,9 @@ echo 0 | sudo tee /sys/module/hid_apple/parameters/fnmode
 ```
 [Keychron Linux Function Keys](https://mikeshade.com/posts/keychron-linux-function-keys/)
 
+F5: refresh directory
+F11: full screen
+
 ## Logitech G102
 ```bash?linenums=false
 sudo add-apt-repository ppa:libratbag-piper/piper-libratbag-git
@@ -664,4 +667,12 @@ nnoremap <C-F> :FlyGrep<CR>
 ```vim
 <leader><leader>h
 <leader><leader>l
+```
+
+#### vim-fetch
+[wsdjeg/vim-fetch](https://github.com/wsdjeg/vim-fetch#installation)
+usage
+```shell?linenums=false
+# open file.ext on line 12 at column 3
+vim path/to/file.ext:12:3
 ```

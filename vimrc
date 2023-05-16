@@ -305,6 +305,7 @@ Plug 'easymotion/vim-easymotion'
 Plug 'ctrlpvim/ctrlp.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'wsdjeg/vim-fetch'
 " Plug 'ludovicchabant/vim-gutentags'
 " Initialize plugin system
 call plug#end()
