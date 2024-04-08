@@ -174,13 +174,36 @@ function mmr() {
 
 function docrash()
 {
-	CRASH_EXTENSIONS=~/Workspace/ramdump/devtools/crash_analysis_suite/finch_bin/extensions/ ~/Workspace/ramdump/devtools/crash_analysis_suite/finch_bin/crash -x "$1" "$2"
+    export DOVECRASHROOT=/home/zongmincui/workspace/devtools/crash_analysis_suite/dove_bin/
+    export PATH=$DOVECRASHROOT:$PATH
+	# CRASH_EXTENSIONS=~/workspace/devtools/crash_analysis_suite/dove_bin/extensions/ ~/workspace/devtools/crash_analysis_suite/dove_bin/crash -x "$1" "$2"
 }
 
 function zmMount()
 {
     sudo mount -t cifs //10.1.24.167/isp /mnt/fileserver/isp -o user=zongmincui,password=AAbbcc123,domain=asrmicro,rw,uid=1000
     sudo mount -t cifs //10.1.24.167/fpga /mnt/fileserver/FPGA -o user=zongmincui,password=AAbbcc123,domain=asrmicro,rw,uid=1000
+}
+
+function dwtCalc()
+{
+    local ImgW=$1
+    local ImgH=$2
+    local ExtW=$(((($ImgW + 63) >> 6) << 6))
+    local ExtH=$(((($ImgH + 31) >> 5) << 5))
+    local LL1W=$((ExtW >> 1))
+    local LL1H=$((ExtH >> 1))
+    local LL2W=$((ExtW >> 2))
+    local LL2H=$((ExtH >> 2))
+    local LL3W=$((ExtW >> 3))
+    local LL3H=$((ExtH >> 3))
+    local LL4W=$((ExtW >> 4))
+    local LL4H=$((ExtH >> 4))
+
+    echo "dwtLL1 = $LL1W * $LL1H"
+    echo "dwtLL2 = $LL2W * $LL2H"
+    echo "dwtLL3 = $LL3W * $LL3H"
+    echo "dwtLL4 = $LL4W * $LL4H"
 }
 
 # Go language environment variables GOROOT , GOPATH and PATH
@@ -207,3 +230,8 @@ source /usr/share/bash-completion/completions/git
 export CATAPULTROOT=/home/zongmincui/workspace/github/catapult/
 export TRACINGPATH=$CATAPULTROOT/tracing/bin/
 export PATH=$TRACINGPATH:$PATH
+
+# ctrl-] then will copy whatever is on the current bash prompt to the clipboard.
+alias pbcopy='xclip -selection clipboard'
+alias pbpaste='xclip -selection clipboard -o'
+bind '"\C-]":"\C-e\C-u pbcopy <<"EOF"\n\C-y\nEOF\n"'

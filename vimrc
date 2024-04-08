@@ -307,6 +307,9 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'wsdjeg/vim-fetch'
 " Plug 'ludovicchabant/vim-gutentags'
+"
+" Doc 
+" Plug 'skywind3000/vim-cppman'
 " Initialize plugin system
 call plug#end()
 
@@ -498,6 +501,7 @@ endfunction
 function! GenerateScope()
   call system('find . ! -path .git ! -type l -name "*.[ch]" -print >cscope.files')
   call system('find . ! -path .git ! -type l -name "*.cpp" -print >>cscope.files')
+  call system('find . ! -path .git ! -type l -name "*.cc" -print >>cscope.files')
   call system('cscope -bkq -i cscope.files')
   call AddScope()
 endfunction
@@ -801,3 +805,6 @@ function! MyToHtml(line1, line2)
   let g:html_use_css = old_css
 endfunction
 command! -range=% MyToHtml :call MyToHtml(<line1>,<line2>)
+
+autocmd FileType cpp setlocal keywordprg=:!cppman
+autocmd FileType c setlocal keywordprg=:!man\ 3

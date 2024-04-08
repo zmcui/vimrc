@@ -528,6 +528,25 @@ index cb42c95e..15a65810 100644
 refs
 : [lsp-mode + clangd memory consumption problem](https://www.reddit.com/r/emacs/comments/eme5zk/lspmode_clangd_memory_consumption_problem/)
 
+7.  Ubuntu 22.04 - C++ header file not found using Vim with YouCompleteMe
+```bash?linenums=false
+$ dpkg --list | grep compiler
+ii  clang-14                                                    1:14.0.6~++20230131082221+f28c006a5895-1~exp1~20230131082248.184                amd64        C, C++ and Objective-C compiler
+ii  g++                                                         4:11.2.0-1ubuntu1                                                               amd64        GNU C++ compiler
+ii  g++-11                                                      11.4.0-1ubuntu1~22.04                                                           amd64        GNU C++ compiler
+ii  g++-11-multilib                                             11.4.0-1ubuntu1~22.04                                                           amd64        GNU C++ compiler (multilib support)
+ii  g++-9                                                       9.5.0-1ubuntu1~22.04                                                            amd64        GNU C++ compiler
+ii  g++-multilib                                                4:11.2.0-1ubuntu1                                                               amd64        GNU C++ compiler (multilib files)
+ii  gcc                                                         4:11.2.0-1ubuntu1                                                               amd64        GNU C compiler
+ii  gcc-11                                                      11.4.0-1ubuntu1~22.04                                                           amd64        GNU C compiler
+ii  gcc-11-multilib                                             11.4.0-1ubuntu1~22.04                                                           amd64        GNU C compiler (multilib support)
+ii  gcc-12                                                      12.3.0-1ubuntu1~22.04                                                           amd64        GNU C compiler
+ii  gcc-9                                                       9.5.0-1ubuntu1~22.04                                                            amd64        GNU C compiler
+ii  gcc-multilib                                                4:11.2.0-1ubuntu1                                                               amd64        GNU C compiler (multilib files)
+
+```
+[solution](https://github.com/clangd/clangd/issues/1394#issuecomment-1328676884)
+
 #### rdnetto/ycm-generator
 
 #### ervandew/supertab
