@@ -6,6 +6,7 @@ B  |2019.07.31|zongmincui|vim8 update
 C  |2019.08.03|zongmincui|replace vundle with plug
 D  |2020.09.29|zongmincui|fzf
 E  |2023.01.17|zongmincui|gf
+F  |2024.05.10|zongmincui|cleanup
 
 https://github.com/zmcui/vimrc
 
@@ -382,7 +383,7 @@ refs
 ## Plugins
 [VimAwesome](https://vimawesome.com/)
 ### Plugin Manager
-#### VundleVim/Vundle.vim
+#### ~~VundleVim/Vundle.vim~~
 
 #### junegunn/vim-plug
 异步插件管理器 A minimalist Vim plugin manager.
@@ -394,9 +395,8 @@ automatically displays all buffers when there's only one tab open.
 
 #### vim-airline/vim-airline-themes
 #### scrooloose/nerdtree
-#### majutsushi/tagbar
+#### majutsushi/tagbar	
 #### vim-scripts/a.vim
-#### tpope/vim-fugitive
 Diff between current file and the index
 ```vim
 :Gdiff :0
@@ -409,8 +409,6 @@ Diff between current file and current file 3 commits ago:
 ```vim
 :Gdiff ~3
 ```
-#### vim-scripts/doxygentoolkit.vim
-#### Yggdroot/indentLine
 
 ### IntelliSense 
 #### Valloric/YouCompleteMe
@@ -547,42 +545,38 @@ ii  gcc-multilib                                                4:11.2.0-1ubuntu
 ```
 [solution](https://github.com/clangd/clangd/issues/1394#issuecomment-1328676884)
 
-#### rdnetto/ycm-generator
-
+#### ~~rdnetto/ycm-generator~~
 #### ervandew/supertab
-
 #### sirver/ultisnips
-
 #### honza/vim-snippets
-
 #### scrooloose/nerdcommenter
-
 #### Townk/vim-autoclose
-
 #### habamax/vim-skipit
 Skip text in INSERT mode.
 
 If you have g:skipit_default_mappings set to 1 then while INSERT mode on press \<CTRL-L\> l to skip everything until parentheses, bars or quotes and place cursor right after them.
 
-### Syntax
+### Syntax Highlighting and indentation
 #### sheerun/vim-polyglot
-A collection of language packs for Vim.
-
-#### vim-scripts/Logcat-syntax-highlighter
-
-#### plasticboy/vim-markdown
-
-#### vhda/verilog_systemverilog.vim
-
-#### octol/vim-cpp-enhanced-highlight
+A collection of language packs and indentions  for Vim.
+Vim Polyglot tries to automatically detect indentation settings, If this feature is not working for you for some reason, please file an issue and disable it temporarily with:
+```vim?linenums=false
+let g:polyglot_disabled = ['autoindent']
+```
+#### ~~vim-scripts/Logcat-syntax-highlighter~~
+#### ~~plasticboy/vim-markdown~~
+#### ~~vhda/verilog_systemverilog.vim~~
+#### ~~octol/vim-cpp-enhanced-highlight~~
+#### Yggdroot/indentLine
+```vim?linenums=false
+Plug 'Yggdroot/indentLine'
+```
+This plugin is used for displaying thin vertical lines at each indentation level for code indented with spaces.
 
 ### Syntastic
-#### scrooloose/syntastic
-##### FAQ:
-- Including header files recursively for syntastic
-[how to](http://stackoverflow.com/questions/16622992/including-header-files-recursively-for-syntastic)
-
-#### w0rp/ale
+#### ~~scrooloose/syntastic~~(deprecated)
+#### ~~w0rp/ale~~
+[ALE]:  Asynchronous Lint Engine
 
 ### Formatting
 #### Chiel92/vim-autoformat
@@ -694,4 +688,27 @@ usage
 ```shell?linenums=false
 # open file.ext on line 12 at column 3
 vim path/to/file.ext:12:3
+```
+
+### Source Code Management
+#### vim-fugitive
+```vim?linenums=false
+Plug 'tpope/vim-fugitive'
+```
+#### vim-gitgutter
+```vim?linenums=false
+Plug 'airblade/vim-gitgutter'
+```
+
+### Doxygen
+#### vim-scripts/doxygentoolkit.vim
+```vim?linenums=false
+Plug 'vim-scripts/doxygentoolkit.vim'
+
+let g:DoxygenToolkit_briefTag_funcName = "yes"
+let g:DoxygenToolkit_briefTag_pre=""
+let g:DoxygenToolkit_briefTag_post="-"
+let g:DoxygenToolkit_paramTag_pre="@"
+let g:DoxygenToolkit_paramTag_post=":"
+let g:DoxygenToolkit_returnTag="Return: 0 on success, error code otherwise."
 ```

@@ -253,7 +253,7 @@ iab xdate <c-r>=strftime("%a, %d %b %Y %H:%M:%S %z")<cr>
 " Plug: 'sheerun/vim-polyglot'
 """"""""""""""""""""""""""""""
 " polyglot_disabled should define before load plugin
-let g:polyglot_disabled = ['autoindent']
+" let g:polyglot_disabled = ['autoindent']
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plug
@@ -307,9 +307,7 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'wsdjeg/vim-fetch'
 " Plug 'ludovicchabant/vim-gutentags'
-"
-" Doc 
-" Plug 'skywind3000/vim-cppman'
+
 " Initialize plugin system
 call plug#end()
 
@@ -613,12 +611,6 @@ let g:skipit_default_mappings = 1
 nmap <F4> :AT<cr>
 
 """"""""""""""""""""""""""""""
-" => logcat
-""""""""""""""""""""""""""""""
-au BufRead,BufNewFile *.logcat set filetype=logcat
-au BufRead,BufNewFile *.dmsg set filetype=dmsg
-
-""""""""""""""""""""""""""""""
 " Vundle: rhysd/vim-autoformat
 """"""""""""""""""""""""""""""
 let g:formatdef_autopep8 = "'autopep8 - --range '.a:firstline.' '.a:lastline"
@@ -805,6 +797,3 @@ function! MyToHtml(line1, line2)
   let g:html_use_css = old_css
 endfunction
 command! -range=% MyToHtml :call MyToHtml(<line1>,<line2>)
-
-autocmd FileType cpp setlocal keywordprg=:!cppman
-autocmd FileType c setlocal keywordprg=:!man\ 3

@@ -235,3 +235,11 @@ export PATH=$TRACINGPATH:$PATH
 alias pbcopy='xclip -selection clipboard'
 alias pbpaste='xclip -selection clipboard -o'
 bind '"\C-]":"\C-e\C-u pbcopy <<"EOF"\n\C-y\nEOF\n"'
+
+
+# Ubuntu Manual: run vim as man pager and view c++ manpage with 'man' command
+export MANPAGER="vim -M +MANPAGER -"
+# cman() {
+#     # fix cppman adds manpage path to mandb not working
+# 	/usr/bin/env man $* 2>/dev/null || cppman $*
+# }
