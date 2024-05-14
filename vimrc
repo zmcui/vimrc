@@ -285,7 +285,6 @@ Plug 'ervandew/supertab'
 Plug 'vim-scripts/a.vim'
 Plug 'sirver/ultisnips'
 Plug 'honza/vim-snippets'
-Plug 'vim-scripts/doxygentoolkit.vim'
 Plug 'scrooloose/nerdcommenter'
 " Plug 'townk/vim-autoclose'
 Plug 'Raimondi/delimitMate'
@@ -307,6 +306,9 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'wsdjeg/vim-fetch'
 " Plug 'ludovicchabant/vim-gutentags'
+
+" doxygen
+Plug 'vim-scripts/doxygentoolkit.vim'
 
 " Initialize plugin system
 call plug#end()
@@ -378,6 +380,18 @@ let g:ctrlp_mruf_default_order = 0
 """"""""""""""""""""""""""""""
 " Plug: fzf
 """"""""""""""""""""""""""""""
+autocmd! FileType fzf set laststatus=0 noshowmode noruler
+  \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+
+function! s:fzf_statusline()
+  " Override statusline as you like
+  highlight fzf1 ctermfg=161 ctermbg=251
+  highlight fzf2 ctermfg=23 ctermbg=251
+  highlight fzf3 ctermfg=237 ctermbg=251
+  setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
+endfunction
+
+autocmd! User FzfStatusLine call <SID>fzf_statusline()
 
 """"""""""""""""""""""""""""""
 " Plug: indentLine
@@ -393,7 +407,8 @@ let g:indentLine_conceallevel = 1
 " libclang or clangd(recommanded)
 let g:ycm_use_clangd = 1
 " clangd memory consumption problem and UI freeze
-let g:ycm_clangd_args = ['-log=verbose', '-pretty', '--background-index=false']
+" let g:ycm_clangd_args = ['-log=verbose', '-pretty', '--background-index=false']
+let g:ycm_clangd_args = ['-log=verbose', '-pretty', '--background-index']
 " Let clangd fully control code completion
 let g:ycm_clangd_uses_ycmd_caching = 0
 " use C/C++ syntax highlighting in the popup for C-family languages
@@ -455,7 +470,8 @@ let g:ycm_filetype_blacklist = {
       \ 'pandoc': 1,
       \ 'infolog': 1,
       \ 'leaderf': 1,
-      \ 'mail': 1
+      \ 'mail': 1,
+      \ 'raw': 1,
       \}
 nnoremap <leader>gl :YcmCompleter GoToDeclaration<CR>
 nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>

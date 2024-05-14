@@ -38,10 +38,22 @@ sudo apt install piper
 
 # Installation
 ## Proxy
+### environment variables
 ```bash?linenums=false
 export HTTP_PROXY=shproxy.asrmicro.com:80
 export HTTPS_PROXY=shproxy.asrmicro.com:80
 ```
+
+### git config
+```bash?linenums=false
+# Failed to connect to go.googlesource.com
+# 配置git全局代理
+git config --global http.proxy "localhost:1080"
+# 删除git全局代理
+git config --global --unset http.proxy
+```
+refs
+: [Git设置代理拉取](https://my.oschina.net/dingdayu/blog/1509885)
 
 ## VIM 8.0
 ### PPA(Deprecated)
@@ -270,19 +282,6 @@ refs
 : [wiki](http://vim.wikia.com/wiki/Pasting_code_with_syntax_coloring_in_emails)
 
 ### Soure Code Tagging System
-#### Ctags
-```bash?linenums=false
-# installing from apt
-sudo apt install ctags
-# generate tags under current dir
-ctags -R *
-```
-`crtl ]`: jump to definition of the function call which the cursor point to
-`ctrl t`: go bach to where you came from
-
-refs
-: [VIM WITH CTAGS](https://linux.byexamples.com/archives/177/vim-with-ctags/)
-
 #### cscope
 1. install
 Cscope is a very powerful interface allowing you to easily navigate C-like code files.
@@ -341,15 +340,6 @@ cscope -Rbq
 ```vim
 :copen
 ```
-
-#### Gtags
-```bash?linenums=false
-# generate the GTAGS, GRTAGS, and GPATH files
-gtags
-```
-refs
-: [GNU Global](https://www.gnu.org/software/global/)
-[GNU GLOBAL, THE PROGRAMMER’S FRIEND](https://linux.byexamples.com/archives/538/gnu-global-the-programmers-friend)
 
 ### Startup Time Cost
 启动时把计时信息写入文件，用于分析载入 .vimrc、插件和打开首个文件的过程中时哪一步最耗时
@@ -412,6 +402,7 @@ Diff between current file and current file 3 commits ago:
 
 ### IntelliSense 
 #### Valloric/YouCompleteMe
+##### Installation
 - [Linux 64-bit installlation](https://github.com/ycm-core/YouCompleteMe#linux-64-bit)
 
 Compiling YCM with semantic support for C-family languages through clangd:
@@ -426,27 +417,32 @@ cd ~/.vim/plugged/youcompleteme
 python3 install.py --clangd-completer
 ```
 
-- C-family Semantic Completion
-There are 2 methods which can be used to provide compile flags to clang:
+##### clangd prerequisites
+There are 2 methods which can be used to provide compile flags to clangd:
 1. Use a compilation database
 > If no .ycm_extra_conf.py is found, YouCompleteMe automatically tries to load a compilation database if there is one.
 
 2. Provide the flags manually
-> For a more elaborate example, see ycmd's own[ .ycm_extra_conf.py](https://raw.githubusercontent.com/Valloric/ycmd/66030cd94299114ae316796f3cad181cac8a007c/.ycm_extra_conf.py). You should be able to use it as a starting point
+>  For a more elaborate example, see ycmd's own[ .ycm_extra_conf.py](https://raw.githubusercontent.com/Valloric/ycmd/66030cd94299114ae316796f3cad181cac8a007c/.ycm_extra_conf.py).
+>  You should be able to use it as a starting point
 
-- configs
+##### plugin setttings
 1. `g:ycm_confirm_extra_conf`
- disable prompt if '.ycm_extra_conf.py' is safe to be loaded everytime
+```vim?linenums=false
+" disable prompt if '.ycm_extra_conf.py' is safe to be loaded everytime
+let g:ycm_confirm_extra_conf = 0
+```
  
-2. g:ycm_use_clangd
-```bash?linenums=false
-# install YCM with both libclang and clangd enabled
-cd ~/.vim/bundle/YouCompleteMe
-./install.py --clang-completer
-./install.py --clangd-completer
+2. `g:ycm_use_clangd`
+```vim?linenums=false
+" libclang or clangd(recommanded)
+let g:ycm_use_clangd = 1
+" gives an error if install YCM with both libclang and clangd enabled
+" ./install.py --clang-completer
+" ./install.py --clangd-completer
 ```
 当我用编译命令使能了libclang和clangd之后，并不知道当前ycm用了哪个，所以一直debug 下面的错误
-其实是==ycm_extra_conf.py: Currently clangd does not support ycm_extra_conf.py therefore you must have a compilation database, whereas libclang can work with both.==
+==ycm_extra_conf.py: Currently clangd does not support ycm_extra_conf.py therefore you must have a compilation database, whereas libclang can work with both.==
 ```
 I[16:14:11.825] <-- initialize("1")
 I[16:14:11.825] --> reply("1")
@@ -461,7 +457,7 @@ I[16:14:11.837] Dropped diagnostic outside main file: : too many errors emitted,
 
 3. `g:ycm_semantic_triggers`
 默认输入情况下，是符号补全，YCM 的语义补全一直使用被动触发（输入 ->或 . 或 ::，或者按 CTRL+SPACE/Z）
-```vim
+```vim?linenums=false
 " trigger semantic complete when type
 let g:ycm_semantic_triggers =  {
                         \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
@@ -470,7 +466,14 @@ let g:ycm_semantic_triggers =  {
 ```
 这里我们追加了一个正则表达式，代表相关语言的源文件中，用户只需要输入符号的两个字母，即可自动弹出语义补全：
 
-- FAQ:
+4. `g:ycm_clangd_args`
+```vim?linenums=false
+let g:ycm_clangd_args = ['-log=verbose', '-pretty', '--background-index']
+```
+'--background-index': The index improves code navigation features (go-to-definition, find-references) and code completion.
+[clang-10: Background Indexing](https://releases.llvm.org/10.0.0/tools/clang/tools/extra/docs/clangd/Installation.html#background-indexing)
+
+##### FAQ:
 1. prompt header file not found when open source file
 删除.ycm_extra_conf.py配置里的`'-I’, '.'`
 
@@ -488,17 +491,7 @@ refs
 : [Navigating the Linux Kernel source tree with YouCompleteMe](https://www.scalyr.com/blog/searching-1tb-sec-systems-engineering-before-algorithms/)
 [YouCompleteMe 中容易忽略的配置](https://zhuanlan.zhihu.com/p/33046090)
 
-4. Failed to connect to go.googlesource.com
-```bash?linenums=false
-# 配置git全局代理
-git config --global http.proxy "localhost:1080"
-# 删除git全局代理
-git config --global --unset http.proxy
-```
-refs
-: [Git设置代理拉取](https://my.oschina.net/dingdayu/blog/1509885)
-
-5. fails to clone git://github.com/mitsuhiko/flask-sphinx-themes.git
+4. fails to clone git://github.com/mitsuhiko/flask-sphinx-themes.git
 ```bash?linenums=false
 # You can force all git: to use https with some .gitconfig magic:
 git config --global url."https://".insteadOf git://
@@ -506,7 +499,7 @@ git config --global url."https://".insteadOf git://
 refs
 : [Update the ycmd submodule to the latest commit](https://github.com/ycm-core/YouCompleteMe/pull/3646)
 
-6. clangd memory consumption problem and UI freeze
+5. clangd memory consumption problem and UI freeze
 They don't believe it is related to background indexing after all. I also learnt that you need to pass --background-index=false to actually disable it. That's why it didn't make a difference.
 ```diff?linenums=false
 diff --git i/ycmd/completers/cpp/clangd_completer.py w/ycmd/completers/cpp/clangd_completer.py
@@ -525,21 +518,20 @@ index cb42c95e..15a65810 100644
 ```
 refs
 : [lsp-mode + clangd memory consumption problem](https://www.reddit.com/r/emacs/comments/eme5zk/lspmode_clangd_memory_consumption_problem/)
+[Excessive memory consumption](https://github.com/clangd/clangd/issues/251)
 
-7.  Ubuntu 22.04 - C++ header file not found using Vim with YouCompleteMe
+6.  Ubuntu 22.04 - C++ header file not found using Vim with YouCompleteMe
 ```bash?linenums=false
 $ dpkg --list | grep compiler
 ii  clang-14                                                    1:14.0.6~++20230131082221+f28c006a5895-1~exp1~20230131082248.184                amd64        C, C++ and Objective-C compiler
 ii  g++                                                         4:11.2.0-1ubuntu1                                                               amd64        GNU C++ compiler
 ii  g++-11                                                      11.4.0-1ubuntu1~22.04                                                           amd64        GNU C++ compiler
 ii  g++-11-multilib                                             11.4.0-1ubuntu1~22.04                                                           amd64        GNU C++ compiler (multilib support)
-ii  g++-9                                                       9.5.0-1ubuntu1~22.04                                                            amd64        GNU C++ compiler
 ii  g++-multilib                                                4:11.2.0-1ubuntu1                                                               amd64        GNU C++ compiler (multilib files)
 ii  gcc                                                         4:11.2.0-1ubuntu1                                                               amd64        GNU C compiler
 ii  gcc-11                                                      11.4.0-1ubuntu1~22.04                                                           amd64        GNU C compiler
 ii  gcc-11-multilib                                             11.4.0-1ubuntu1~22.04                                                           amd64        GNU C compiler (multilib support)
 ii  gcc-12                                                      12.3.0-1ubuntu1~22.04                                                           amd64        GNU C compiler
-ii  gcc-9                                                       9.5.0-1ubuntu1~22.04                                                            amd64        GNU C compiler
 ii  gcc-multilib                                                4:11.2.0-1ubuntu1                                                               amd64        GNU C compiler (multilib files)
 
 ```
