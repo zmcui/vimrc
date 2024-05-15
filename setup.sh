@@ -19,6 +19,7 @@ function linkPath() {
 
 linkPath ~/.vimrc `pwd`/vimrc
 linkPath ~/.vim/ftdetect `pwd`/ftdetect
+linkPath ~/.vim/syntax `pwd`/syntax
 linkPath ~/.vim/after `pwd`/after
 # install extended UltiSnips
 linkPath ~/.vim/UltiSnips `pwd`/UltiSnips
