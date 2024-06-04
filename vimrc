@@ -392,6 +392,7 @@ function! s:fzf_statusline()
 endfunction
 
 autocmd! User FzfStatusLine call <SID>fzf_statusline()
+nnoremap <silent> <Leader>ag :Ag <C-R><C-W><CR>
 
 """"""""""""""""""""""""""""""
 " Plug: indentLine
@@ -440,7 +441,7 @@ let g:SuperTabDefaultCompletionType = '<C-n>'
 " trigger semantic complete when type
 let g:ycm_semantic_triggers =  {
                          \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
-                         \ 'cs,lua,javascript': ['re!\w{2}'],
+                         \ 'cs,lua,javascript,cmake': ['re!\w{2}'],
                          \ }
 highlight PMenu ctermfg=0 ctermbg=242 guifg=black guibg=darkgrey
 highlight PMenuSel ctermfg=242 ctermbg=8 guifg=darkgrey guibg=black

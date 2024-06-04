@@ -206,10 +206,39 @@ function zmDwtCalc()
     local LL4W=$((ExtW >> 4))
     local LL4H=$((ExtH >> 4))
 
+    echo "dwtLL0 = $ExtW * $ExtH"
     echo "dwtLL1 = $LL1W * $LL1H"
     echo "dwtLL2 = $LL2W * $LL2H"
     echo "dwtLL3 = $LL3W * $LL3H"
     echo "dwtLL4 = $LL4W * $LL4H"
+}
+
+function zmKgainCalc()
+{
+    if [[ $# -eq 0 ]]; then
+        echo "USAGE: $FUNCNAME [ImgW] [ImgH]"
+        return
+    fi
+    local ImgW=$1
+    local ImgH=$2
+    local ExtW=$(((($ImgW + 63) >> 6) << 6))
+    local ExtH=$(((($ImgH + 31) >> 5) << 5))
+    local LL0W=$((ExtW >> 1))
+    local LL0H=$((ExtH >> 1))
+    local LL1W=$((ExtW >> 2))
+    local LL1H=$((ExtH >> 2))
+    local LL2W=$((ExtW >> 3))
+    local LL2H=$((ExtH >> 3))
+    local LL3W=$((ExtW >> 4))
+    local LL3H=$((ExtH >> 4))
+    local LL4W=$((ExtW >> 5))
+    local LL4H=$((ExtH >> 5))
+
+    echo "kLL0 = $LL0W * $LL0H"
+    echo "kLL1 = $LL1W * $LL1H"
+    echo "kLL2 = $LL2W * $LL2H"
+    echo "kLL3 = $LL3W * $LL3H"
+    echo "kLL4 = $LL4W * $LL4H"
 }
 
 # Go language environment variables GOROOT , GOPATH and PATH
