@@ -621,7 +621,11 @@ Full path fuzzy file, buffer, mru, tag, ... finder for Vim.
 
 #### junegunn/fzf.vim
 [github](https://github.com/junegunn/fzf.vim)
-fuzzy finder can be used with any list; files, command history, processes, hostnames, bookmarks, git commits, etc.
+
+customize command options by redefine
+```vim?linenums=false
+command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, "--word-regexp", fzf#vim#with_preview(), <bang>0)
+```
 
 #### mileszs/ack.vim
 1. configuration

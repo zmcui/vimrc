@@ -49,7 +49,7 @@ endif
 " like <leader>w saves the current file
 let mapleader=","
 
-" Fast saving
+" keymaps Fast saving
 nmap <leader>w :w!<cr>
 "nmap <leader>q :bd<cr>
 nmap <leader>q :bp<cr>:bd #<cr>
@@ -71,7 +71,7 @@ set clipboard=unnamedplus
 " Provides tab-completion for all file-related tasks
 set path+=**
 
-"nnoremap * *``
+" keymaps nnoremap * *``
 nmap <leader>* :vimgrep /<C-R><C-W>/j %<CR>:copen<CR>
 
 " Copy then paste multiple times in Vim
@@ -154,15 +154,14 @@ map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
 
-" Useful mappings for managing tabs
+" keymaps for managing tabs
 map <leader>to :tabonly<cr>
 map <leader>tc :tabclose<cr>
 map <leader>tm :tabmove 
 map <leader>tp :tabp<cr>
 map <leader>tn :tabn<cr>
 
-" Opens a new tab with the current buffer's path
-" Super useful when editing files in the same directory
+" keymaps Opens a new tab with the current buffer's path
 map <leader>te :edit <c-r>=expand("%:p:h")<cr>/
 
 " vim-powered terminal in new tab
@@ -392,6 +391,10 @@ function! s:fzf_statusline()
 endfunction
 
 autocmd! User FzfStatusLine call <SID>fzf_statusline()
+
+" command :Ag redefine
+command! -bang -nargs=* Ag call fzf#vim#ag(<q-args>, "--word-regexp", fzf#vim#with_preview(), <bang>0)
+" keymaps
 nnoremap <silent> <Leader>ag :Ag <C-R><C-W><CR>
 
 """"""""""""""""""""""""""""""
@@ -474,6 +477,7 @@ let g:ycm_filetype_blacklist = {
       \ 'mail': 1,
       \ 'raw': 1,
       \}
+" keymaps
 nnoremap <leader>gl :YcmCompleter GoToDeclaration<CR>
 nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
 nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
