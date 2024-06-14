@@ -7,10 +7,10 @@ function linkPath() {
     fi
 
     if [ -L $1 ]; then # link
-        echo "link: ~/.vimrc -> $(realpath $1)"
+        echo "link: $1 -> $(realpath $1)"
         unlink $1
     elif [ -e $1 ] ; then # file
-        echo "file: $(realpath `$1`)"
+        echo "file: $(realpath $1)"
         mv $1 $1"_bp"
     fi
     ln -s $2 $1
@@ -25,6 +25,7 @@ linkPath ~/.vimrc `pwd`/vimrc
 linkPath ~/.vim/ftdetect `pwd`/ftdetect
 linkPath ~/.vim/syntax `pwd`/syntax
 linkPath ~/.vim/after `pwd`/after
+linkPath ~/.vim/plugin `pwd`/plugin
 # install extended UltiSnips
 linkPath ~/.vim/UltiSnips `pwd`/UltiSnips
 linkPath ~/.bash_aliases `pwd`/bash_aliases

@@ -2,16 +2,16 @@
 # formated by gg=G
 
 # user defined aliases
-## grep 
-alias gp='egrep -nr --exclude={tags,*.out} --exclude-dir={\.git,obj}' 
-## dirs operation command 
-alias ..='cd ..' 
-alias ...='cd ../..' 
-alias ....='cd ../../..' 
-alias .....='cd ../../../..' 
-## git relevent 
-alias gts='git status .' 
-## change directory to the git root directory 
+## grep
+alias gp='egrep -nr --exclude={tags,*.out} --exclude-dir={\.git,obj}'
+## dirs operation command
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+## git relevent
+alias gts='git status .'
+## change directory to the git root directory
 alias gtr='cd "$(git rev-parse --show-toplevel)"'
 ## open (in vim) all modified files in a git rep
 alias diffvim='vim `git diff --name-only` -p'
@@ -183,8 +183,8 @@ function zmDocrash()
 
 function zmManuMount()
 {
-    sudo mount -t cifs //10.1.24.167/isp /mnt/fileserver/isp -o user=zongmincui,password=AAbbcc123,domain=asrmicro,rw,uid=1000
-    sudo mount -t cifs //10.1.24.167/fpga /mnt/fileserver/FPGA -o user=zongmincui,password=AAbbcc123,domain=asrmicro,rw,uid=1000
+    sudo mount -t cifs //10.1.24.167/isp /mnt/fileserver/isp -o credentials=~/asr/.cifscredentials,rw,uid=1000
+    sudo mount -t cifs //10.1.24.167/fpga /mnt/fileserver/FPGA -o credentials=~/asr/.cifscredentials,rw,uid=1000
 }
 
 function zmDwtCalc()
@@ -332,5 +332,5 @@ bind '"\C-]":"\C-e\C-u pbcopy <<"EOF"\n\C-y\nEOF\n"'
 export MANPAGER="vim -M +MANPAGER -"
 # cman() {
 #     # fix cppman adds manpage path to mandb not working
-# 	/usr/bin/env man $* 2>/dev/null || cppman $*
+#	/usr/bin/env man $* 2>/dev/null || cppman $*
 # }
