@@ -96,6 +96,8 @@ set hlsearch
 set incsearch 
 " Cursorline
 set cursorline
+" Ignore case when completing file names and directories
+set wildignorecase
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Colors and Fonts

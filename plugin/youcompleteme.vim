@@ -5,7 +5,7 @@
 let g:ycm_use_clangd = 1
 " clangd memory consumption problem and UI freeze
 " let g:ycm_clangd_args = ['-log=verbose', '-pretty', '--background-index=false']
-let g:ycm_clangd_args = ['-log=verbose', '-pretty', '--background-index']
+let g:ycm_clangd_args = ['-log=verbose', '-pretty', '--background-index', '--header-insertion-decorators', '-header-insertion=iwyu']
 " Let clangd fully control code completion
 let g:ycm_clangd_uses_ycmd_caching = 0
 " use C/C++ syntax highlighting in the popup for C-family languages
@@ -71,6 +71,9 @@ let g:ycm_filetype_blacklist = {
       \ 'raw': 1,
       \}
 " keymaps
+nnoremap <leader>ga :YcmCompleter GoToAlternateFile<CR>
+nnoremap <leader>gc :YcmCompleter GoToCallers<CR>
 nnoremap <leader>gl :YcmCompleter GoToDeclaration<CR>
 nnoremap <leader>gf :YcmCompleter GoToDefinition<CR>
 nnoremap <leader>gg :YcmCompleter GoToDefinitionElseDeclaration<CR>
+nnoremap <leader>gt :YcmCompleter GoToType<CR>
