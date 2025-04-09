@@ -18,6 +18,12 @@ function asrManuMount()
     sudo mount -t cifs //10.1.24.167/fpga /mnt/fileserver/FPGA -o credentials=~/asr/.cifscredentials,rw,uid=1000
 }
 
+function asrAfbcDec()
+{
+    export AFBCROOT=/home/zongmincui/Repositories/ctest/camera-ctest/modules/gt_cppv3/cppv3_smu/simulator_fbc/
+    export PATH=$AFBCROOT:$PATH
+}
+
 function asrDwtCalc()
 {
     if [[ $# -eq 0 ]]; then
