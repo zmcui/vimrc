@@ -269,8 +269,11 @@ endif
 " - For Neovim: ~/.local/share/nvim/plugged
 " - Avoid using standard Vim directory names like 'plugin'
 call plug#begin('~/.vim/plugged')
-" interface
+" themes
 Plug 'altercation/vim-colors-solarized'
+Plug 'morhetz/gruvbox'
+
+" interface
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
